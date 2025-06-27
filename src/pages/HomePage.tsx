@@ -12,9 +12,13 @@ import { useAuth } from '../hooks/useAuth';
 import { useStats } from '../hooks/useStats';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+import { useRecentActivity } from '../hooks/useRecentActivity';
+import { formatDistanceToNow } from 'date-fns';
+
 const HomePage: React.FC = () => {
   const { user } = useAuth();
   const { stats, isLoading: statsLoading } = useStats();
+  const { recentActivity, isLoading: activityLoading } = useRecentActivity();
 
   const features = [
     {
@@ -68,11 +72,9 @@ const HomePage: React.FC = () => {
     { label: 'This Month', value: statsLoading ? '...' : stats.thisMonth.toString() },
   ];
 
-  const recentActivity = [
-    { name: 'Vintage Lamp Analysis', time: '2 hours ago', value: '$45-65' },
-    { name: 'Old Book Valuation', time: '1 day ago', value: '$15-25' },
-    { name: 'Sneaker Price Check', time: '2 days ago', value: '$120-180' },
-  ];
+  const formatTimestamp = (timestamp: number) => {
+    return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+  };
 
   return (
     <div className="space-y-8">
@@ -141,23 +143,34 @@ const HomePage: React.FC = () => {
         </h2>
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {recentActivity.map((item, index) => (
-              <div key={index} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {item.time}
-                    </p>
-                  </div>
-                  <div className="text-sm font-medium text-green-600 dark:text-green-400">
-                    {item.value}
+            {activityLoading ? (
+              <div className="p-6 text-center text-gray-500 dark:text-gray-400">
+                <LoadingSpinner />
+                <p>Loading recent activity...</p>
+              </div>
+            ) : recentActivity.length > 0 ? (
+              recentActivity.map((item) => (
+                <div key={item.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatTimestamp(item.timestamp)}
+                      </p>
+                    </div>
+                    <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                      {item.value}
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="p-6 text-center text-gray-500 dark:text-gray-400">
+                <p>No recent activity found.</p>
               </div>
-            ))}
+            )}
           </div>
           <div className="p-4 bg-gray-50 dark:bg-gray-700">
             <Link

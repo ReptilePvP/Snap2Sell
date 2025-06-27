@@ -17,17 +17,14 @@ import AnalyzeSearchAPIPage from './pages/analysis/AnalyzeSearchAPIPage'
 import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import WelcomePage from './pages/auth/WelcomePage'
-import LoadingSpinner from './components/LoadingSpinner'
+import TroubleshootingPage from './pages/TroubleshootingPage'
+import AuthLoading from './components/AuthLoading'
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
+    return <AuthLoading />
   }
 
   if (!isAuthenticated) {
@@ -36,6 +33,7 @@ const AppContent: React.FC = () => {
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/troubleshooting" element={<TroubleshootingPage />} />
         <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
     )

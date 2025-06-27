@@ -12,7 +12,7 @@ export default {
         input: 'hsl(var(--color-input))',
         ring: 'hsl(var(--color-ring))',
         background: 'hsl(var(--color-background))',
-        foreground: 'hsl(var(--color-text))',
+        foreground: 'hsl(var(--color-foreground))',
         primary: {
           DEFAULT: 'hsl(var(--color-primary))',
           foreground: 'hsl(var(--color-primary-foreground))',
