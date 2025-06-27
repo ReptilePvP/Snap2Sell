@@ -267,4 +267,4 @@ For detailed guidelines on how to contribute, please see our [CONTRIBUTING.md](C
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.# Snap2Sell
