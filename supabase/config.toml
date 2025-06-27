@@ -1,0 +1,35 @@
+[functions.analyze-searchapi]
+enabled = true
+verify_jwt = true
+import_map = "./functions/analyze-searchapi/deno.json"
+entrypoint = "./functions/analyze-searchapi/index.ts"
+
+[functions.analyze-geminiapi]
+enabled = true
+verify_jwt = true
+import_map = "./functions/analyze-geminiapi/deno.json"
+entrypoint = "./functions/analyze-geminiapi/index.ts"
+
+[functions.analyze-serpapi]
+enabled = true
+verify_jwt = true
+import_map = "./functions/analyze-serpapi/deno.json"
+entrypoint = "./functions/analyze-serpapi/index.ts"
+
+[functions.web-analyze-gemini]
+enabled = true
+verify_jwt = false
+import_map = "./functions/web-analyze-gemini/deno.json"
+entrypoint = "./functions/web-analyze-gemini/index.ts"
+
+[functions.web-analyze-searchapi]
+enabled = true
+verify_jwt = false
+import_map = "./functions/web-analyze-searchapi/deno.json"
+entrypoint = "./functions/web-analyze-searchapi/index.ts"
+
+[functions.web-analyze-serpapi]
+enabled = true
+verify_jwt = false
+import_map = "./functions/web-analyze-serpapi/deno.json"
+entrypoint = "./functions/web-analyze-serpapi/index.ts"
