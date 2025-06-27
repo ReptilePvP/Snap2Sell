@@ -23,6 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
+# Expo
+.expo/
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+supabase/.network/
+
 # Backend specific ignores
 /server/node_modules
 /server/dist
@@ -37,3 +45,22 @@ frontend/service-account.json
 packages/*/.env
 packages/*/.env.*
 !packages/*/.env.example
+
+# Additional common ignores
+*.tsbuildinfo
+.turbo/
+.vercel/
+.next/
+out/
+coverage/
+*.tgz
+*.tar.gz
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Project documentation/implementation files
+WEB_API_IMPLEMENTATION.md
+WEB_FUNCTIONS_DEPLOYMENT.md
