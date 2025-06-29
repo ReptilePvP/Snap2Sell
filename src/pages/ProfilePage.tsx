@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  UserIcon, 
   Cog6ToothIcon, 
   BellIcon, 
   ShieldCheckIcon, 

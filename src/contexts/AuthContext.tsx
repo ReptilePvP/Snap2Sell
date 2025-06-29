@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { supabase } from '../services/supabaseClient';
-import type { User, Session } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { AuthContextType } from '../types';
 import { logEnvironmentStatus } from '../utils/connectionDebug';
 import { ToastContext } from './ToastContext';
@@ -22,7 +22,6 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [session, setSession] = useState<Session | null>(null);
   const toastContext = useContext(ToastContext);
 
   // Test Supabase connection on mount
@@ -91,7 +90,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           return;
         }
         
-        setSession(session);
         if (session?.user) {
           await loadUserProfile(session.user);
         } else {
@@ -115,7 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!isMounted) return;
       
       console.log('Auth state changed:', event, session?.user?.id);
-      setSession(session);
       
       if (session?.user) {
         await loadUserProfile(session.user);
@@ -289,7 +286,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.error('Error signing out:', error);
       }
       setUser(null);
-      setSession(null);
     } catch (error) {
       console.error('Error signing out:', error);
     }

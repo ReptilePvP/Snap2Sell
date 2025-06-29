@@ -19,7 +19,6 @@ import {
   ChartBarIcon as ChartBarIconSolid
 } from '@heroicons/react/24/solid';
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../hooks/useTheme';
 import ThemeToggle from './ThemeToggle';
 import { useState } from 'react';
 
@@ -30,7 +29,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const { user } = useAuth();
-  const { isDark } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigation = [

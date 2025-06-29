@@ -4,12 +4,17 @@ import { supabase } from './supabaseClient';
  * Debug utilities for troubleshooting Supabase Edge Function calls
  */
 
+// Type guard for import.meta.env access
+const getEnvVar = (key: string): string | undefined => {
+  return (import.meta as any).env?.[key];
+};
+
 export const debugSupabaseConnection = async () => {
   console.log('=== Supabase Debug Information ===');
   
   // Check environment variables
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+  const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
   
   console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Missing');
   console.log('Supabase Anon Key:', supabaseAnonKey ? 'Set' : 'Missing');
@@ -32,7 +37,7 @@ export const debugSupabaseConnection = async () => {
   
   // Test basic Supabase connectivity
   try {
-    const { data, error } = await supabase.from('profiles').select('count').limit(0);
+    const { error } = await supabase.from('profiles').select('count').limit(0);
     console.log('Database connectivity test:', error ? 'Failed' : 'Success');
     if (error) console.log('Database error:', error);
   } catch (error) {

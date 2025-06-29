@@ -5,10 +5,9 @@ import {
   CurrencyDollarIcon, 
   LightBulbIcon,
   PhotoIcon,
-  ChevronRightIcon,
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
-import { AnalysisResult, VisualMatch } from '../types';
+import { AnalysisResult } from '../types';
 import ReactMarkdown from 'react-markdown';
 
 interface ResultCardProps {

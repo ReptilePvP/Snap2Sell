@@ -12,12 +12,12 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const showToast = useCallback((type: ToastMessage['type'], title: string, message?: string) => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = Math.random().toString(36).substring(2, 9);
     const newToast: ToastMessage = {
       id,
       type,
       title,
-      message,
+      message: message || '',
     };
 
     setToasts(prev => [...prev, newToast]);

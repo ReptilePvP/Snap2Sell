@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { CloudArrowUpIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { useToast } from '../hooks/useToast';
 import LoadingSpinner from './LoadingSpinner';
 
