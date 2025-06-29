@@ -52,7 +52,7 @@ const SignUpPage: React.FC = () => {
             Create Account
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Join Snap2Cash and start discovering value
+            Join Snap2Sell and start discovering value
           </p>
         </div>
       </div>

@@ -1,6 +1,6 @@
-# Supabase Setup Guide for Snap2Cash
+# Supabase Setup Guide for Snap2Sell
 
-This guide will walk you through setting up Supabase for the Snap2Cash application.
+This guide will walk you through setting up Supabase for the Snap2Sell application.
 
 ## ✅ Your Supabase Project is Already Configured!
 

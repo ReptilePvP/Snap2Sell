@@ -1,6 +1,6 @@
-# Web App Analysis Services
+# Snap2Sell Web Analysis Services
 
-This directory contains all the analysis services for the Snap2Cash web application. These services provide a clean interface for interacting with various AI analysis providers while maintaining separation from the mobile app implementation.
+This directory contains all the analysis services for the Snap2Sell web application. These services provide a clean interface for interacting with various AI analysis providers while maintaining separation from the mobile app implementation.
 
 ## Architecture
 
@@ -13,14 +13,15 @@ The web app uses a layered approach:
 ├─────────────────────────────────────────┤
 │         High-Level Services             │
 │   (geminiService, serpApiService,       │
-│    searchApiService, webAnalysisService)│
+│    searchApiService, openLensService,   │
+│    webAnalysisService)                  │
 ├─────────────────────────────────────────┤
 │          Base API Layer                 │
 │        (apiService.ts)                  │
 ├─────────────────────────────────────────┤
-│       Supabase Functions               │
-│  (analyze-geminiapi, analyze-serpapi,   │
-│   analyze-searchapi)                    │
+│       Backend Services                  │
+│  Supabase Functions + OpenLens FastAPI  │
+│  (analyze-*, web-analyze-openlens)      │
 └─────────────────────────────────────────┘
 ```
 
@@ -35,15 +36,16 @@ The web app uses a layered approach:
 - **`geminiService.ts`**: Web-optimized Gemini AI analysis
 - **`serpApiService.ts`**: Web-optimized SerpAPI analysis  
 - **`searchApiService.ts`**: Web-optimized SearchAPI analysis
+- **`openLensService.ts`**: Custom OpenLens analysis with direct API calls
 
 Each provider service:
-- Wraps the core API functions
+- Wraps the core API functions or direct endpoints
 - Adds web-specific error handling
 - Ensures consistent result formatting
 - Provides typed interfaces
 
 ### Unified Analysis Service (`webAnalysisService.ts`)
-- Single entry point for all analysis providers
+- Single entry point for all four analysis providers
 - Provider metadata and capabilities
 - Unified error handling
 - Provider validation
@@ -53,6 +55,32 @@ Each provider service:
 - Provider display names and descriptions
 - Error result creation
 - Common helper functions
+
+## Available Analysis Providers
+
+### 1. **🤖 Gemini AI** (`ApiProvider.GEMINI`)
+- **Technology**: Google Gemini Pro API via Supabase Edge Function
+- **Features**: Advanced AI analysis, detailed valuations, AI reasoning
+- **Best for**: Comprehensive product analysis and accurate estimates
+
+### 2. **🔍 SerpAPI** (`ApiProvider.SERPAPI`)
+- **Technology**: SerpAPI Google Lens via Supabase Edge Function  
+- **Features**: Visual matches, web search results, product listings
+- **Best for**: Finding similar items across the web
+
+### 3. **🔎 SearchAPI** (`ApiProvider.SEARCHAPI`)
+- **Technology**: SearchAPI visual search via Supabase Edge Function
+- **Features**: Product matching, market analysis, pricing insights
+- **Best for**: Market research and price discovery
+
+### 4. **👁️ OpenLens** (`ApiProvider.OPENLENS`) *(New!)*
+- **Technology**: Custom FastAPI server with direct integration
+- **Features**: 
+  - Google Lens search via Selenium automation
+  - Web content scraping with BeautifulSoup
+  - AI analysis using OpenAI GPT-4o-mini  
+  - Comprehensive insights combining multiple data sources
+- **Best for**: Most thorough analysis with web scraping capabilities
 
 ## Usage Examples
 

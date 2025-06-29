@@ -1,5 +1,5 @@
-# Snap2Cash
-> A web application to upload, process, and analyze images to extract structured data and insights.
+# Snap2Sell
+> A comprehensive AI-powered image analysis platform for discovering item value and insights.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com)
 [![Code Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com)
@@ -8,18 +8,23 @@
 
 ## Project Overview
 
-Snap2Cash is a powerful web application designed to bridge the gap between the physical and digital worlds. In a world where we are constantly interacting with visual information, Snap2Cash provides a seamless solution to capture, analyze, and extract value from images.
+Snap2Sell is a cutting-edge web application designed to bridge the gap between the physical and digital worlds through advanced AI-powered image analysis. In today's visual-centric world, Snap2Sell provides a seamless solution to capture, analyze, and extract valuable insights from images.
 
-The core problem this project solves is the inefficiency and manual effort required to digitize and understand visual data. Whether you're a reseller trying to quickly assess an item's value, a professional needing to digitize receipts, or a curious individual wanting to learn more about an object, Snap2Cash streamlines this process into a few simple clicks. Our goal is to save you time and effort by turning your visual information into actionable, structured data.
+The core problem this project solves is the inefficiency and manual effort required to understand and value visual information. Whether you're a reseller assessing item value, a collector researching artifacts, or simply curious about objects around you, Snap2Sell streamlines this process into intuitive interactions. Our mission is to transform visual information into actionable, structured data that saves time and provides valuable insights.
 
 ## Key Features
 
-*   **Effortless Image Upload:** A simple and intuitive interface for uploading images from your device.
-*   **Multiple Analysis Services:** Integration with powerful APIs like Google Gemini and SerpAPI to provide rich and diverse analysis, from product identification to web search results.
-*   **Secure Cloud Storage:** All uploaded images are securely stored in Supabase Storage, ensuring your data is safe and always accessible.
-*   **User Authentication:** Secure user accounts powered by Supabase to manage your history and saved analyses.
-*   **Dashboard & History:** A personalized dashboard to view your past analyses and track your activity.
-*   **Cross-Platform:** Available as both a web application and mobile app (React Native/Expo).
+*   **🔍 Multi-Provider Analysis:** Integration with four powerful analysis engines:
+    - **Gemini AI:** Advanced AI analysis with detailed valuation
+    - **SerpAPI:** Google Lens technology for comprehensive web search
+    - **SearchAPI:** Visual search for market data and comparable listings
+    - **OpenLens:** Custom Google Lens + AI analysis with web scraping
+*   **📱 Cross-Platform Support:** Available as both web application and mobile app
+*   **🔐 Secure Authentication:** User accounts powered by Supabase with JWT tokens
+*   **☁️ Cloud Storage:** Secure image storage with Supabase Storage
+*   **📊 Analytics Dashboard:** View analysis history and track activity
+*   **🎯 Smart Results:** Structured data with titles, descriptions, valuations, and insights
+*   **🔄 Real-time Processing:** Live progress indicators and background processing
 
 ## Live Demo / Screenshots
 
@@ -27,7 +32,7 @@ The core problem this project solves is the inefficiency and manual effort requi
 
 [Link to Live Demo]()
 
-![Screenshot of Snap2Cash](https://via.placeholder.com/800x450.png?text=Snap2Cash+Screenshot)
+![Screenshot of Snap2Sell](https://via.placeholder.com/800x450.png?text=Snap2Sell+Screenshot)
 
 ## Technology Stack
 
@@ -49,30 +54,34 @@ Our application is built with a modern and robust technology stack to ensure a h
     *   Supabase (PostgreSQL with built-in authentication)
 *   **Cloud & Services:**
     *   Supabase Storage for file storage
-    *   SearchAPI.io for search engine results
-    *   SerpAPI for search engine results  
-    *   Google Gemini for advanced AI-powered analysis
+    *   Google Gemini API for advanced AI analysis
+    *   SearchAPI.io for visual search capabilities  
+    *   SerpAPI for Google Lens technology
+    *   OpenLens (custom) for comprehensive analysis with web scraping
+    *   OpenAI GPT-4o-mini for AI insights
 
 ## Installation & Setup
 
-Follow these steps to get a local copy of Snap2Cash up and running.
+Follow these steps to get a local copy of Snap2Sell up and running.
 
 ### Prerequisites
 
 *   Node.js (v18 or higher recommended)
 *   npm
+*   Python 3.8+ (for OpenLens)
 *   A Supabase account and project
 *   API keys for:
     *   Google Gemini API
     *   SearchAPI.io (optional)
     *   SerpAPI (optional)
+    *   OpenAI (for OpenLens)
 
 ### Setup Instructions
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/ReptilePvP/snap2cash.git
-    cd snap2cash
+    git clone https://github.com/ReptilePvP/Snap2Sell.git
+    cd Snap2Sell
     ```
 
 2.  **Install root dependencies:**
@@ -98,10 +107,10 @@ Follow these steps to get a local copy of Snap2Cash up and running.
         supabase db push
         ```
 
-4.  **Configure Web Frontend:**
-    *   Create a `.env` file in the `packages/web` directory:
+4.  **Configure Environment Variables:**
+    *   Create a `.env` file in the root directory:
         ```sh
-        cp packages/web/.env.example packages/web/.env
+        cp .env.example .env
         ```
     *   Edit the `.env` file and add your credentials:
         ```env
@@ -112,7 +121,23 @@ Follow these steps to get a local copy of Snap2Cash up and running.
         VITE_SEARCHAPI_API_KEY=your_searchapi_key
         ```
 
-5.  **Configure Supabase Functions:**
+5.  **Configure OpenLens:**
+    *   Set up OpenLens API key:
+        ```sh
+        cd openlens-app/src
+        cp secret_key.py.example secret_key.py
+        ```
+    *   Edit `secret_key.py` and add your OpenAI API key:
+        ```python
+        API_KEY = "your-openai-api-key-here"
+        ```
+    *   Install Python dependencies:
+        ```sh
+        cd openlens-app
+        pip install -r requirements.txt
+        ```
+
+6.  **Configure Supabase Functions:**
     *   Set up environment variables for your Supabase Edge Functions:
         ```sh
         # In your Supabase dashboard, go to Edge Functions > Settings
@@ -122,114 +147,91 @@ Follow these steps to get a local copy of Snap2Cash up and running.
         SERP_API_KEY=your_serpapi_key
         ```
 
-6.  **Configure Mobile App (Optional):**
-    *   Create a `.env` file in the `packages/mobile` directory:
-        ```sh
-        cp packages/mobile/.env.example packages/mobile/.env
-        ```
-    *   Edit the `.env` file and add your credentials:
-        ```env
-        EXPO_PUBLIC_API_URL=http://localhost:8080
-        EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
-        EXPO_PUBLIC_SEARCH_API_KEY=your_search_api_key
-        EXPO_PUBLIC_SERP_API_KEY=your_serp_api_key
-        EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
-        EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-        ```
-    *   Install mobile dependencies:
-        ```sh
-        cd mobile
-        npm install
-        ```
+7.  **Run the Complete Development Environment:**
+    ```sh
+    # Start both web app and OpenLens API
+    npm run dev:full
+    ```
+    
+    Or run individually:
+    ```sh
+    # Web app only
+    npm run dev
+    
+    # OpenLens API only
+    npm run openlens
+    ```
 
-7.  **Run the Web Application:**
-    *   Navigate to the web package directory:
-        ```sh
-        cd packages/web
-        ```
-    *   Install dependencies and start the development server:
-        ```sh
-        npm install
-        npm run dev
-        ```
-    *   The web application will be available at `http://localhost:5173`
-
-8.  **Run the Mobile App (Optional):**
-    *   In a separate terminal, navigate to the mobile directory:
-        ```sh
-        cd mobile
-        npm start
-        ```
-    *   Or run the mobile package:
-        ```sh
-        cd packages/mobile
-        npm install
-        npm start
-        ```
+8.  **Access the Application:**
+    *   Web Application: `http://localhost:5173`
+    *   OpenLens API: `http://127.0.0.1:8000`
+    *   API Documentation: `http://127.0.0.1:8000/docs`
 
 ## Usage
 
-Once the application is running, you can start analyzing images.
+Once the application is running, you can start analyzing images with multiple AI providers.
 
 **Web Application:**
 1.  Open your browser and navigate to `http://localhost:5173`.
-2.  Create an account or sign in using the Supabase authentication.
-3.  Go to the "Home" page and click "Take Photo" or "Upload Image".
-4.  Select an image from your device or take a photo with your camera.
-5.  Choose the desired analysis service (Gemini, SearchAPI, or SerpAPI).
-6.  View the structured results returned by the AI service.
+2.  Create an account or sign in using Supabase authentication.
+3.  Navigate to the "Analysis" page to choose your preferred provider:
+    - **Gemini AI:** Advanced AI analysis with detailed valuation
+    - **SerpAPI:** Google Lens technology for web search
+    - **SearchAPI:** Visual search for market comparisons  
+    - **OpenLens:** Comprehensive analysis with web scraping
+4.  Upload an image from your device or use the camera.
+5.  View comprehensive results with structured insights.
+6.  Access your analysis history from the dashboard.
 
 **Mobile Application:**
-1.  Open the Expo Go app on your device.
-2.  Scan the QR code shown in your terminal when you run `npm start`.
+1.  Install the Expo Go app on your device.
+2.  Scan the QR code when running the mobile development server.
 3.  Create an account or sign in.
-4.  Use the camera to take photos or select from your gallery.
+4.  Use the camera to capture photos or select from gallery.
 5.  Choose your preferred analysis service and view results.
-
-## Database Schema
-
-The application uses Supabase (PostgreSQL) with the following main table:
-
-### Profiles Table
-```sql
-CREATE TABLE profiles (
-  id uuid REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  name text NOT NULL,
-  email text NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-```
-
-This table extends Supabase's built-in `auth.users` table with additional user profile information.
-
-## Project Architecture
-
-The application follows a modern, scalable architecture:
-
-*   **Frontend (Web):** React + TypeScript + Vite in `packages/web/`
-*   **Mobile App:** React Native + Expo in `mobile/` and `packages/mobile/`
-*   **Backend:** Supabase Edge Functions in `supabase/functions/`
-*   **Database:** PostgreSQL with Row Level Security via Supabase
-*   **Storage:** Supabase Storage for image uploads
-*   **Authentication:** Supabase Auth with JWT tokens
 
 ## Available Analysis Services
 
-### 1. **Gemini API Analysis**
+### 1. **🤖 Gemini AI Analysis**
 - **Purpose:** Advanced AI-powered image analysis
-- **Features:** Item identification, description, estimated value, valuation rationale
-- **Best for:** Detailed product analysis and resale value estimation
+- **Features:** Item identification, detailed descriptions, estimated value, AI reasoning
+- **Best for:** Comprehensive product analysis and accurate valuations
+- **Technology:** Google Gemini Pro API
 
-### 2. **SearchAPI Analysis**
-- **Purpose:** Google Lens-powered visual search
-- **Features:** Visual matches, similar products, pricing information
-- **Best for:** Finding similar items and market comparisons
+### 2. **🔍 SerpAPI Analysis**  
+- **Purpose:** Google Lens technology for visual search
+- **Features:** Visual matches, web search results, product listings, price comparisons
+- **Best for:** Finding similar items across the web
+- **Technology:** SerpAPI Google Lens integration
 
-### 3. **SerpAPI Analysis**
-- **Purpose:** Search engine results for image queries
-- **Features:** Web search results, product listings, related information
-- **Best for:** Comprehensive web search and product research
+### 3. **🔎 SearchAPI Analysis**
+- **Purpose:** Visual search for comparable listings
+- **Features:** Product matching, market analysis, pricing insights, source links
+- **Best for:** Market research and price discovery
+- **Technology:** SearchAPI visual search capabilities
+
+### 4. **👁️ OpenLens Analysis** *(New!)*
+- **Purpose:** Comprehensive Google Lens + AI analysis with web scraping
+- **Features:** 
+  - Google Lens search via Selenium automation
+  - Web content scraping with BeautifulSoup
+  - AI analysis using OpenAI GPT-4o-mini
+  - Comprehensive insights and structured results
+- **Best for:** Most thorough analysis combining multiple data sources
+- **Technology:** Custom Python FastAPI server with OpenAI integration
+
+## Project Architecture
+
+The application follows a modern, scalable architecture with multiple analysis providers:
+
+*   **Frontend (Web):** React + TypeScript + Vite
+*   **Mobile App:** React Native + Expo  
+*   **Backend:** Supabase Edge Functions (Deno/TypeScript)
+*   **Custom API:** OpenLens FastAPI server (Python)
+*   **Database:** PostgreSQL with Row Level Security via Supabase
+*   **Storage:** Supabase Storage for secure image uploads
+*   **Authentication:** Supabase Auth with JWT tokens
+*   **Analysis Providers:** Multi-provider architecture for diverse insights
 
 ## Authentication Flow
 
