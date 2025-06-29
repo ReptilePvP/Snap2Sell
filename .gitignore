@@ -46,6 +46,10 @@ packages/*/.env
 packages/*/.env.*
 !packages/*/.env.example
 
+# OpenLens sensitive files
+openlens-app/src/secret_key.py
+openlens-app/data/
+
 # Additional common ignores
 *.tsbuildinfo
 .turbo/

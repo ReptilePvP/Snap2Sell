@@ -20,6 +20,8 @@ export const getProviderDisplayName = (provider: ApiProvider): string => {
       return 'SerpAPI';
     case ApiProvider.SEARCHAPI:
       return 'SearchAPI';
+    case ApiProvider.OPENLENS:
+      return 'OpenLens';
     default:
       return provider;
   }
@@ -33,6 +35,8 @@ export const getProviderDescription = (provider: ApiProvider): string => {
       return 'Google Lens technology for finding similar items across the web';
     case ApiProvider.SEARCHAPI:
       return 'Visual search to gather comparable listings and market data';
+    case ApiProvider.OPENLENS:
+      return 'Google Lens + AI analysis with comprehensive web scraping and insights';
     default:
       return 'AI-powered image analysis';
   }

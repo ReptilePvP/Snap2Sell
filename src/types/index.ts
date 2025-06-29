@@ -51,6 +51,7 @@ export enum ApiProvider {
   GEMINI = 'Gemini',
   SERPAPI = 'SerpAPI',
   SEARCHAPI = 'SearchAPI',
+  OPENLENS = 'OpenLens',
 }
 
 export interface ToastMessage {

@@ -13,6 +13,7 @@ export {
 export { analyzeImageWithGemini } from './geminiService';
 export { analyzeImageWithSerp } from './serpApiService';
 export { analyzeImageWithSearch } from './searchApiService';
+export { analyzeImageWithOpenLens } from './openLensService';
 
 // Unified analysis service
 export { WebAnalysisService } from './webAnalysisService';

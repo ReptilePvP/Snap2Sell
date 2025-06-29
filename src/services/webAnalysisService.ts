@@ -2,6 +2,7 @@ import { AnalysisResult, ApiProvider } from '../types';
 import { analyzeImageWithGemini } from './geminiService';
 import { analyzeImageWithSerp } from './serpApiService';
 import { analyzeImageWithSearch } from './searchApiService';
+import { analyzeImageWithOpenLens } from './openLensService';
 import { getProviderDisplayName } from './analysisUtils';
 
 /**
@@ -23,6 +24,8 @@ export class WebAnalysisService {
         return analyzeImageWithSerp(imageUrl);
       case ApiProvider.SEARCHAPI:
         return analyzeImageWithSearch(imageUrl);
+      case ApiProvider.OPENLENS:
+        return analyzeImageWithOpenLens(imageUrl);
       default:
         throw new Error(`Unsupported analysis provider: ${provider}`);
     }
@@ -32,7 +35,7 @@ export class WebAnalysisService {
    * Get available providers
    */
   static getAvailableProviders(): ApiProvider[] {
-    return [ApiProvider.GEMINI, ApiProvider.SERPAPI, ApiProvider.SEARCHAPI];
+    return [ApiProvider.GEMINI, ApiProvider.SERPAPI, ApiProvider.SEARCHAPI, ApiProvider.OPENLENS];
   }
 
   /**
@@ -66,6 +69,14 @@ export class WebAnalysisService {
           color: 'purple',
           capabilities: ['Visual search', 'Product matching', 'Market analysis', 'Price insights'],
         };
+      case ApiProvider.OPENLENS:
+        return {
+          name: displayName,
+          description: 'Google Lens + AI analysis with comprehensive web scraping',
+          icon: 'eye',
+          color: 'orange',
+          capabilities: ['Google Lens search', 'Web content scraping', 'AI analysis', 'Comprehensive insights'],
+        };
       default:
         return {
           name: displayName,
@@ -90,4 +101,5 @@ export {
   analyzeImageWithGemini,
   analyzeImageWithSerp,
   analyzeImageWithSearch,
+  analyzeImageWithOpenLens,
 };

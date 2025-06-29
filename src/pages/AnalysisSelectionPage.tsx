@@ -4,7 +4,8 @@ import {
   SparklesIcon, 
   CloudIcon, 
   MagnifyingGlassIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 
 const AnalysisSelectionPage: React.FC = () => {
@@ -32,6 +33,14 @@ const AnalysisSelectionPage: React.FC = () => {
       href: '/analyze/searchapi',
       color: 'bg-green-500',
       features: ['Visual recognition', 'Similar products', 'Market pricing', 'Source links'],
+    },
+    {
+      name: 'OpenLens Analysis',
+      description: 'Google Lens + AI analysis with comprehensive web scraping and insights',
+      icon: EyeIcon,
+      href: '/analyze/openlens',
+      color: 'bg-orange-500',
+      features: ['Google Lens search', 'Web content scraping', 'AI analysis', 'Comprehensive insights'],
     },
   ];
 

@@ -146,3 +146,45 @@ export const analyzeImageWithGeminiAPI = async (imageUrl: string): Promise<Analy
     throw new Error('An unexpected error occurred during Gemini analysis');
   }
 };
+
+export const analyzeImageWithOpenLensAPI = async (imageUrl: string): Promise<AnalysisResult> => {
+  try {
+    console.log('Calling web OpenLens function with imageUrl:', imageUrl);
+    
+    const { data, error } = await supabase.functions.invoke('web-analyze-openlens', {
+      body: { imageUrl },
+    });
+
+    console.log('Web OpenLens function response:', { data, error });
+
+    if (error) {
+      console.error('Web OpenLens Supabase function error:', error);
+      throw new Error(`Failed to send a request to the Edge Function: ${error.message}`);
+    }
+
+    if (!data || !data.success) {
+      console.error('Web OpenLens function returned unsuccessful response:', data);
+      throw new Error(data?.message || data?.error || 'OpenLens analysis failed');
+    }
+
+    // Return the properly formatted result from the edge function
+    const result = data.data;
+    
+    return {
+      id: result.id || `openlens-${Date.now()}`,
+      title: result.title || 'OpenLens Analysis',
+      description: result.description || 'OpenLens analysis completed',
+      value: result.value || 'Analysis Complete',
+      aiExplanation: result.aiExplanation || result.analysis || 'OpenLens provided comprehensive analysis',
+      imageUrl: result.imageUrl || imageUrl,
+      apiProvider: ApiProvider.OPENLENS,
+      timestamp: result.timestamp || Date.now(),
+    };
+  } catch (err) {
+    console.error('Error in analyzeImageWithOpenLensAPI:', err);
+    if (err instanceof Error) {
+      throw err;
+    }
+    throw new Error('An unexpected error occurred during OpenLens analysis');
+  }
+};
