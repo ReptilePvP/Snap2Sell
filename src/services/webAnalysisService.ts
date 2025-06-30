@@ -2,7 +2,7 @@ import { AnalysisResult, ApiProvider } from '../types';
 import { analyzeImageWithGemini } from './geminiService';
 import { analyzeImageWithSerp } from './serpApiService';
 import { analyzeImageWithSearch } from './searchApiService';
-import { analyzeImageWithOpenLens } from './openLensService';
+import { analyzeImageWithOpenLensAPI } from './apiService';
 import { getProviderDisplayName } from './analysisUtils';
 
 /**
@@ -25,7 +25,7 @@ export class WebAnalysisService {
       case ApiProvider.SEARCHAPI:
         return analyzeImageWithSearch(imageUrl);
       case ApiProvider.OPENLENS:
-        return analyzeImageWithOpenLens(imageUrl);
+        return analyzeImageWithOpenLensAPI(imageUrl);
       default:
         throw new Error(`Unsupported analysis provider: ${provider}`);
     }
@@ -101,5 +101,5 @@ export {
   analyzeImageWithGemini,
   analyzeImageWithSerp,
   analyzeImageWithSearch,
-  analyzeImageWithOpenLens,
+  analyzeImageWithOpenLensAPI,
 };
