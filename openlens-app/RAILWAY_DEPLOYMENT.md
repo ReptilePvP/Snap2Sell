@@ -85,3 +85,4 @@ railway variables set OPENAI_API_KEY=your_openai_key_here
 - **Build fails**: Check Dockerfile and requirements.txt
 - **Crashes on start**: Verify OPENAI_API_KEY is set
 - **Timeout**: Railway has longer timeouts than Cloud Run by default
+# Railway network configuration updated
