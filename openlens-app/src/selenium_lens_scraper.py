@@ -270,16 +270,6 @@ def click_lens_button(driver):
     selectors = [
         # Primary selector based on data-attribute
         "[data-base-lens-url='https://lens.google.com']",
-        # Alternative selectors for Google Lens button
-        "a[href*='lens.google.com']",
-        "button[data-ved][jsname]",  # Google's button pattern
-        "[data-tooltip*='Lens']",
-        "[aria-label*='Lens']",
-        "[title*='Lens']",
-        "div[data-hveid] a[href*='lens']",
-        # More generic patterns
-        "a[href*='/search'][href*='tbm=isch']",  # Image search patterns
-        "[data-ved*='CAE'] a",  # Common Google link pattern
     ]
     
     for selector in selectors:
@@ -298,71 +288,6 @@ def click_lens_button(driver):
             return True
         except Exception as e:
             logger.debug(f"Selector {selector} failed: {e}")
-    
-    # Try JavaScript-based search for Lens button
-    try:
-        logger.info("Trying JavaScript approach to find Lens button...")
-        lens_buttons = driver.execute_script("""
-            function findLensButton() {
-                // Look for elements containing "lens" or similar
-                let buttons = [];
-                
-                // Search all clickable elements
-                document.querySelectorAll('a, button, [role="button"], [onclick]').forEach(el => {
-                    let text = (el.textContent || '').toLowerCase();
-                    let href = (el.href || '').toLowerCase();
-                    let title = (el.title || '').toLowerCase();
-                    let ariaLabel = (el.getAttribute('aria-label') || '').toLowerCase();
-                    
-                    if (text.includes('lens') || 
-                        href.includes('lens') || 
-                        title.includes('lens') || 
-                        ariaLabel.includes('lens')) {
-                        buttons.push(el);
-                    }
-                });
-                
-                return buttons;
-            }
-            
-            return findLensButton();
-        """)
-        
-        if lens_buttons and len(lens_buttons) > 0:
-            logger.info(f"Found {len(lens_buttons)} potential Lens buttons via JavaScript")
-            for button in lens_buttons:
-                try:
-                    # Try clicking each button
-                    action = ActionChains(driver)
-                    action.move_to_element(button).pause(0.2).perform()
-                    button.click()
-                    time.sleep(2)
-                    
-                    # Check if we're now on a Lens page or similar
-                    current_url = driver.current_url
-                    if 'lens' in current_url.lower():
-                        logger.info("Successfully navigated to Lens via JavaScript button")
-                        return True
-                        
-                except Exception as e:
-                    logger.debug(f"JavaScript button click failed: {e}")
-                    continue
-                    
-    except Exception as e:
-        logger.error(f"JavaScript approach failed: {e}")
-    
-    # Last resort: try to navigate directly to Google Lens
-    try:
-        logger.info("Trying direct navigation to Google Lens...")
-        driver.get("https://lens.google.com/")
-        time.sleep(3)
-        
-        if 'lens.google.com' in driver.current_url:
-            logger.info("Successfully navigated directly to Google Lens")
-            return True
-            
-    except Exception as e:
-        logger.error(f"Direct navigation failed: {e}")
     
     # If we get here, all selectors failed
     logger.error("Could not find Google Lens button")
@@ -384,14 +309,6 @@ def find_and_click_import_option(driver):
         "//span[contains(text(), 'ficheiro')]",    # Portuguese  
         "//span[contains(text(), 'bestand')]",     # Dutch
         "//span[contains(text(), 'αρχείο')]",      # Greek
-        "//span[contains(text(), 'upload')]",      # Upload variations
-        "//span[contains(text(), 'Upload')]",
-        "//button[contains(., 'upload')]",
-        "//button[contains(., 'Upload')]",
-        "[data-tooltip*='upload']",
-        "[aria-label*='upload']",
-        "input[type='file']",                       # Direct file input
-        "[accept*='image']",                        # Image file inputs
     ]
     
     # Try each selector
@@ -400,17 +317,6 @@ def find_and_click_import_option(driver):
             logger.info(f"Trying import selector: {selector}")
             is_xpath = selector.startswith("//")
             by_method = By.XPATH if is_xpath else By.CSS_SELECTOR
-            
-            # If this is potentially a file input, it might be hidden
-            if "input[type='file']" in selector or "[accept" in selector:
-                try:
-                    # Find even if not visible
-                    import_element = driver.find_element(by_method, selector)
-                    logger.info("Found file input element")
-                    return import_element
-                except Exception as e:
-                    logger.debug(f"No direct file input found: {e}")
-                    continue
                 
             # For visible elements
             try:
@@ -454,18 +360,13 @@ def find_and_click_import_option(driver):
                 return text.includes('file') || 
                        text.includes('fichier') || 
                        text.includes('import') || 
-                       text.includes('upload') ||
-                       text.includes('datei') ||
-                       text.includes('archivo') ||
-                       text.includes('bestand');
+                       text.includes('upload');
             }
             
             // Find all potential buttons
             let potentialButtons = [];
-            document.querySelectorAll('[role="button"], button, span, div[tabindex], a').forEach(el => {
-                if (containsFileOrImport(el.textContent) || 
-                    containsFileOrImport(el.getAttribute('aria-label')) ||
-                    containsFileOrImport(el.getAttribute('title'))) {
+            document.querySelectorAll('[role="button"], button, span').forEach(el => {
+                if (containsFileOrImport(el.textContent)) {
                     potentialButtons.push(el);
                 }
             });
@@ -622,123 +523,55 @@ def extract_links_and_descriptions(driver, csv_path):
 
 def run_google_lens_search(image_path, csv_path):
     """Run a Google Lens search with the provided image and save results to CSV"""
-    max_retries = 3
-    retry_count = 0
+    driver = setup_anti_detection_driver()
     
-    while retry_count < max_retries:
-        driver = None
-        try:
-            logger.info(f"Attempt {retry_count + 1}/{max_retries} to run Google Lens search")
-            driver = setup_anti_detection_driver()
-            
-            # Add random delay between actions to appear more human-like
-            def human_delay():
-                time.sleep(random.uniform(1.0, 3.0))
-            
-            # Start at Google.com
-            url = "https://www.google.com"
-            logger.info(f"Opening {url}...")
-            driver.get(url)
-            human_delay()
-            
-            # Handle cookie consent dialog
-            handle_cookie_consent(driver)
-            human_delay()
-            
-            # Wait for page to load completely
-            wait_for_page_load(driver)
-            
-            # Try direct lens approach first
-            try:
-                logger.info("Trying direct navigation to Google Lens...")
-                driver.get("https://lens.google.com/")
-                human_delay()
-                wait_for_page_load(driver)
-            except Exception as e:
-                logger.warning(f"Direct navigation failed: {e}, trying alternative method")
-                # If direct navigation fails, go back to Google.com and try the button
-                driver.get(url)
-                human_delay()
-                wait_for_page_load(driver)
-                
-                # Click on Google Lens button
-                if not click_lens_button(driver):
-                    logger.error("Failed to access Google Lens - trying alternative URL")
-                    # Try another alternative URL
-                    driver.get("https://www.google.com/imghp")
-                    human_delay()
-                    wait_for_page_load(driver)
-                    
-                    # Look for camera icon on Google Images
-                    try:
-                        camera_icon = driver.find_element(By.CSS_SELECTOR, "[aria-label*='camera' i], [title*='camera' i], [aria-label*='search by image' i]")
-                        camera_icon.click()
-                        human_delay()
-                    except Exception as e:
-                        logger.error(f"Failed to find camera icon: {e}")
-                        raise
-            
-            # Wait for Google Lens interface to load
-            wait_for_page_load(driver)
-            human_delay()
-            
-            # Find and click import option
-            file_input = find_and_click_import_option(driver)
-            
-            # Upload image file
-            if not upload_image(driver, file_input, image_path):
-                logger.error("Failed to upload image - aborting")
-                retry_count += 1
-                continue
-            
-            # Wait for search results to load with progressive waiting
-            logger.info("Waiting for search results...")
-            for i in range(3):  # Try multiple wait times
-                time.sleep(3 + i*2)  # Increase wait time with each iteration
-                wait_for_page_load(driver)
-                
-                # Check if we have any results
-                links = driver.find_elements(By.TAG_NAME, "a")
-                if len(links) > 10:  # Arbitrary threshold to determine if results loaded
-                    logger.info(f"Found {len(links)} links, results appear to be loaded")
-                    break
-                logger.info(f"Only found {len(links)} links, waiting longer...")
-            
-            # Extract all links and descriptions
-            results = extract_links_and_descriptions(driver, csv_path)
-            
-            # Verify we got some results
-            if results and len(results) > 0:
-                logger.info(f"Successfully extracted {len(results)} results")
-                return True
-            else:
-                logger.warning("No results extracted, may need to retry")
-                retry_count += 1
-                continue
+    try:
+        # Start at Google.com
+        url = "https://www.google.com"
+        logger.info(f"Opening {url}...")
+        driver.get(url)
         
-        except Exception as e:
-            logger.error(f"Error in Google Lens search attempt {retry_count + 1}: {e}")
-            retry_count += 1
-            # Take screenshot of error state if possible
-            try:
-                if driver:
-                    error_screenshot_path = f"{os.path.dirname(csv_path)}/error_screenshot_{retry_count}.png"
-                    driver.save_screenshot(error_screenshot_path)
-                    logger.info(f"Error screenshot saved to {error_screenshot_path}")
-            except:
-                pass
-        finally:
-            # Always close the driver
-            if driver:
-                logger.info("Closing browser...")
-                try:
-                    driver.quit()
-                except:
-                    pass
-    
-    # If we've exhausted all retries
-    logger.error(f"Failed to complete Google Lens search after {max_retries} attempts")
-    return False
+        # Handle cookie consent dialog
+        handle_cookie_consent(driver)
+        
+        # Set window size
+        driver.set_window_size(1366, 768)
+        
+        # Wait for page to load completely
+        wait_for_page_load(driver)
+        
+        # Click on Google Lens button
+        if not click_lens_button(driver):
+            logger.error("Failed to access Google Lens - aborting")
+            return False
+            
+        # Wait for Google Lens interface to load
+        wait_for_page_load(driver)
+        
+        # Find and click import option
+        file_input = find_and_click_import_option(driver)
+        
+        # Upload image file
+        if not upload_image(driver, file_input, image_path):
+            logger.error("Failed to upload image - aborting")
+            return False
+        
+        # Wait for search results to load
+        logger.info("Waiting for search results...")
+        time.sleep(5)  # Initial wait
+        wait_for_page_load(driver)
+        
+        # Extract all links and descriptions
+        extract_links_and_descriptions(driver, csv_path)
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error in Google Lens search: {e}")
+        return False
+    finally:
+        # Always close the driver
+        logger.info("Closing browser...")
+        driver.quit()
 
 # Module can be run independently
 if __name__ == "__main__":
