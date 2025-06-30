@@ -7,13 +7,14 @@ export {
   analyzeImageWithGeminiAPI,
   analyzeImageWithSerpAPI,
   analyzeImageWithSearchAPI,
+  analyzeImageWithOpenLensAPI,
 } from './apiService';
 
 // High-level analysis services (web-specific wrappers)
 export { analyzeImageWithGemini } from './geminiService';
 export { analyzeImageWithSerp } from './serpApiService';
 export { analyzeImageWithSearch } from './searchApiService';
-export { analyzeImageWithOpenLens } from './openLensService';
+// Note: OpenLens now uses the unified API service (analyzeImageWithOpenLensAPI)
 
 // Unified analysis service
 export { WebAnalysisService } from './webAnalysisService';

@@ -2,6 +2,16 @@ import { AnalysisResult, ApiProvider } from '../types';
 import { formatAnalysisForDisplay } from './analysisUtils';
 
 /**
+ * DEPRECATED: OpenLens direct service
+ * 
+ * This service has been deprecated in favor of using the Supabase Edge Function
+ * for consistency with other API providers. All OpenLens analysis now goes through
+ * the edge function which properly handles Supabase storage URLs.
+ * 
+ * @deprecated Use analyzeImageWithOpenLensAPI from apiService.ts instead
+ */
+
+/**
  * OpenLens analysis service
  * Uses direct API calls to your local FastAPI OpenLens server
  * For development - bypasses Supabase edge functions

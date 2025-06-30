@@ -4,18 +4,27 @@ from pydantic import BaseModel
 import base64
 import os
 import uuid
+import requests
 from selenium_lens_scraper import run_google_lens_search
 from bs4_small_scraper import scrape_first_urls
 from llm_analysis import get_llm_analysis
 import logging
 from config import Config
 
-# Setup logging
+# Setup logging with more detailed format
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Log startup information
+logger.info("Starting OpenLens API server")
+logger.info(f"Image directory: {Config.IMAGE_DIR}")
+logger.info(f"CSV directory: {Config.CSV_DIR}")
+logger.info(f"TXT directory: {Config.TXT_DIR}")
+logger.info(f"Max URLs to scrape: {Config.MAX_URLS_TO_SCRAPE}")
+logger.info(f"Max characters in summary: {Config.MAX_CHARACTERS_IN_SUMMARY}")
 
 # Create necessary directories
 Config.create_dirs()
@@ -33,6 +42,9 @@ app.add_middleware(
 
 class ImageRequest(BaseModel):
     image: str  # base64 encoded image
+    
+class ImageUrlRequest(BaseModel):
+    imageUrl: str  # URL to fetch image from (e.g., Supabase storage)
 
 def remove_files(request_id: str):
     if Config.REMOVE_IMAGES:
@@ -58,6 +70,42 @@ async def root():
 
 @app.post("/analyze")
 async def process_image(request: ImageRequest, background_tasks: BackgroundTasks):
+    """Process image analysis with base64 encoded image"""
+    return await _process_image_analysis(request.image, background_tasks)
+
+@app.post("/analyze-url")
+async def process_image_url(request: ImageUrlRequest, background_tasks: BackgroundTasks):
+    """Process image analysis with image URL (e.g., from Supabase storage)"""
+    try:
+        logger.info(f"Received image URL analysis request: {request.imageUrl[:100]}...")
+        
+        # Fetch image from URL with proper headers and timeout
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        
+        logger.info(f"Fetching image from URL with timeout=30s")
+        response = requests.get(request.imageUrl, headers=headers, timeout=30)
+        response.raise_for_status()
+        
+        # Log response info
+        logger.info(f"Image fetch successful - Status: {response.status_code}, Content-Type: {response.headers.get('content-type')}, Size: {len(response.content)} bytes")
+        
+        # Convert to base64
+        image_base64 = base64.b64encode(response.content).decode('utf-8')
+        logger.info(f"Successfully converted image URL to base64 (size: {len(image_base64)} chars)")
+        
+        return await _process_image_analysis(image_base64, background_tasks)
+        
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to fetch image from URL {request.imageUrl}: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to fetch image from URL: {str(e)}")
+    except Exception as e:
+        logger.error(f"Error processing image URL: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing image URL: {str(e)}")
+
+async def _process_image_analysis(image_base64: str, background_tasks: BackgroundTasks):
+    """Core image analysis logic shared by both endpoints"""
     try:
         # Generate unique ID for this request
         request_id = str(uuid.uuid4())
@@ -67,7 +115,7 @@ async def process_image(request: ImageRequest, background_tasks: BackgroundTasks
         image_path = f"{Config.IMAGE_DIR}/image_{request_id}.{Config.IMAGE_FILE_EXTENSION}"
         try:
             with open(image_path, "wb") as img_file:
-                img_data = base64.b64decode(request.image)
+                img_data = base64.b64decode(image_base64)
                 img_file.write(img_data)
             logger.info(f"Image saved at {image_path}")
         except Exception as e:

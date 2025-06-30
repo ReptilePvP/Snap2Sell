@@ -1,10 +1,9 @@
-# Use Python 3.11 slim image
+# Simplified Railway-optimized Dockerfile
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies for Chrome and Selenium
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -20,33 +19,23 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY src/ ./src/
-COPY start-railway.sh ./
 
-# Create necessary directories
+# Create directories
 RUN mkdir -p data/images data/csv data/txt
 
-# Make startup script executable
-RUN chmod +x start-railway.sh
-
-# Set environment variables for Chrome in headless mode
+# Set environment variables
 ENV DISPLAY=:99
 ENV CHROME_ARGS="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugging-port=9222"
-
-# Set Python path to include src directory
 ENV PYTHONPATH=/app/src
 
-# Expose port (Railway uses PORT environment variable)
+# Railway automatically sets PORT, we just need to use it
 EXPOSE 8000
 
-# Health check - Railway will use this
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
-
-# Start the application using our startup script
-CMD ["./start-railway.sh"]
+# Simple startup command - Railway handles PORT injection
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

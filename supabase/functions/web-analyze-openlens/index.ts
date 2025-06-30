@@ -40,27 +40,16 @@ serve(async (req) => {
       )
     }
 
-    // Fetch the image from Supabase storage and convert to base64
-    console.log('Fetching image from Supabase:', imageUrl)
-    const imageResponse = await fetch(imageUrl)
+    // Call your Cloud Run OpenLens service with the new URL endpoint
+    const OPENLENS_API_URL = 'https://snap2sell-openlens-cdaacmjrpq-uc.a.run.app'
+    console.log('Calling OpenLens Cloud Run API with image URL')
     
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to fetch image: ${imageResponse.statusText}`)
-    }
-
-    const imageBuffer = await imageResponse.arrayBuffer()
-    const base64Image = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)))
-
-    console.log('Image converted to base64, calling OpenLens API')
-
-    // Call your Cloud Run OpenLens service
-    const OPENLENS_API_URL = 'https://snap2sell-openlens-156064765830.us-central1.run.app'
-    const openLensResponse = await fetch(`${OPENLENS_API_URL}/analyze`, {
+    const openLensResponse = await fetch(`${OPENLENS_API_URL}/analyze-url`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ image: base64Image }),
+      body: JSON.stringify({ imageUrl: imageUrl }),
       // Add timeout for Cloud Run requests
       signal: AbortSignal.timeout(120000) // 2 minutes timeout
     })
@@ -116,6 +105,8 @@ serve(async (req) => {
         errorMessage = 'Could not access the image URL. Please ensure the image is publicly accessible.'
       } else if (error.message.includes('OpenLens API error')) {
         errorMessage = 'OpenLens analysis service is temporarily unavailable. Please try again.'
+      } else if (error.message.includes('Failed to fetch image from URL')) {
+        errorMessage = 'OpenLens service could not retrieve the image from Supabase storage. Please try uploading again.'
       } else {
         errorMessage = error.message
       }

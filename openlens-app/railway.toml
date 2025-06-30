@@ -1,0 +1,15 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.railway"
+
+[deploy]
+startCommand = "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+
+[env]
+PORT = { default = "8000" }
+PYTHONPATH = "/app/src"
+DISPLAY = ":99"
+CHROME_ARGS = "--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugging-port=9222"
