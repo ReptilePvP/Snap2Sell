@@ -40,9 +40,9 @@ serve(async (req) => {
       )
     }
 
-    // Call your Cloud Run OpenLens service with the new URL endpoint
-    const OPENLENS_API_URL = 'https://snap2sell-openlens-cdaacmjrpq-uc.a.run.app'
-    console.log('Calling OpenLens Cloud Run API with image URL')
+    // Call your Railway OpenLens service with the new URL endpoint
+    const OPENLENS_API_URL = 'https://snap2sell-production.up.railway.app'
+    console.log('Calling OpenLens Railway API with image URL')
     
     const openLensResponse = await fetch(`${OPENLENS_API_URL}/analyze-url`, {
       method: 'POST',

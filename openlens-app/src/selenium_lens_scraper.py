@@ -377,13 +377,21 @@ def find_and_click_import_option(driver):
     
     # Different selectors for the import button/link, ordered by specificity
     import_selectors = [  
-        "//span[contains(text(), 'file')]",        # anglais  
-        "//span[contains(text(), 'fichier')]",     # français  
-        "//span[contains(text(), 'Datei')]",       # allemand  
-        "//span[contains(text(), 'archivo')]",     # espagnol  
-        "//span[contains(text(), 'ficheiro')]",    # portugais  
-        "//span[contains(text(), 'bestand')]",    # néerlandais
-        "//span[contains(text(), 'αρχείο')]",     # grec  
+        "//span[contains(text(), 'file')]",        # English  
+        "//span[contains(text(), 'fichier')]",     # French  
+        "//span[contains(text(), 'Datei')]",       # German  
+        "//span[contains(text(), 'archivo')]",     # Spanish  
+        "//span[contains(text(), 'ficheiro')]",    # Portuguese  
+        "//span[contains(text(), 'bestand')]",     # Dutch
+        "//span[contains(text(), 'αρχείο')]",      # Greek
+        "//span[contains(text(), 'upload')]",      # Upload variations
+        "//span[contains(text(), 'Upload')]",
+        "//button[contains(., 'upload')]",
+        "//button[contains(., 'Upload')]",
+        "[data-tooltip*='upload']",
+        "[aria-label*='upload']",
+        "input[type='file']",                       # Direct file input
+        "[accept*='image']",                        # Image file inputs
     ]
     
     # Try each selector
@@ -394,7 +402,7 @@ def find_and_click_import_option(driver):
             by_method = By.XPATH if is_xpath else By.CSS_SELECTOR
             
             # If this is potentially a file input, it might be hidden
-            if "input[type='file']" in selector:
+            if "input[type='file']" in selector or "[accept" in selector:
                 try:
                     # Find even if not visible
                     import_element = driver.find_element(by_method, selector)
@@ -446,13 +454,18 @@ def find_and_click_import_option(driver):
                 return text.includes('file') || 
                        text.includes('fichier') || 
                        text.includes('import') || 
-                       text.includes('upload');
+                       text.includes('upload') ||
+                       text.includes('datei') ||
+                       text.includes('archivo') ||
+                       text.includes('bestand');
             }
             
             // Find all potential buttons
             let potentialButtons = [];
-            document.querySelectorAll('[role="button"], button, span').forEach(el => {
-                if (containsFileOrImport(el.textContent)) {
+            document.querySelectorAll('[role="button"], button, span, div[tabindex], a').forEach(el => {
+                if (containsFileOrImport(el.textContent) || 
+                    containsFileOrImport(el.getAttribute('aria-label')) ||
+                    containsFileOrImport(el.getAttribute('title'))) {
                     potentialButtons.push(el);
                 }
             });
