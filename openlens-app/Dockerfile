@@ -34,6 +34,9 @@ RUN mkdir -p data/images data/csv data/txt
 ENV DISPLAY=:99
 ENV CHROME_ARGS="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugging-port=9222"
 
+# Set Python path to include src directory
+ENV PYTHONPATH=/app/src
+
 # Expose port
 EXPOSE 8080
 

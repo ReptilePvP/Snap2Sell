@@ -8,7 +8,7 @@ from config import Config
 logger = logging.getLogger(__name__)
 
 def get_llm_analysis(content, system_prompt=None, base_url=None, model=None, temperature=None, api_key=None):
-    """Process the text content through OpenAI API"""
+    """Process the text content through OpenAI API with robust error handling and fallbacks"""
     # Use default system prompt if not provided
     if system_prompt is None:
         system_prompt = Config.SYSTEM_PROMPT
@@ -21,11 +21,14 @@ def get_llm_analysis(content, system_prompt=None, base_url=None, model=None, tem
     # Use default temperature if not provided
     if temperature is None:
         temperature = Config.TEMPERATURE
-    # Use API key from environment variable or fallback
+    
+    # Get API key with multiple fallback options
     if api_key is None:
+        # Try environment variable first
         api_key = os.getenv('OPENAI_API_KEY')
+        
+        # If not found, try secret_key.py for local development
         if not api_key:
-            # Try to import from secret_key.py as fallback for local development
             try:
                 from secret_key import API_KEY
                 api_key = API_KEY
@@ -35,35 +38,93 @@ def get_llm_analysis(content, system_prompt=None, base_url=None, model=None, tem
                 raise ValueError("OpenAI API key not configured")
         else:
             logger.info("Using API key from environment variable")
-        
-    try:
-        # Initialize the OpenAI client
-        client = OpenAI(
-            base_url=base_url,
-            api_key=api_key,
-        )
-        
-        # Create the completion
-        logger.info("Sending request to OpenAI API")
-        logger.info(f"Using model: {model}")
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": content}
-            ],
-            temperature=temperature
-        )
-        
-        # Extract the response text
-        result = response.choices[0].message.content
-        
-        logger.info(f"Received {len(result)} chars response from OpenAI")
-        return result
-        
-    except Exception as e:
-        logger.error(f"Error processing content with OpenAI: {e}")
-        return f"Error processing with OpenAI: {str(e)}"
+    
+    # Check if content is empty
+    if not content or len(content.strip()) == 0:
+        logger.error("No content to analyze! Returning error message.")
+        return "Unable to analyze content: No text was scraped from Google Lens search results. This may be due to Google's anti-bot measures or network connectivity issues."
+    
+    # Initialize variables for retry logic
+    max_retries = 3
+    retry_count = 0
+    last_error = None
+    
+    while retry_count < max_retries:
+        try:
+            # Initialize the OpenAI client with Cloud Run optimized settings
+            import httpx
+            
+            # Create custom HTTP client with longer timeouts and retries
+            http_client = httpx.Client(
+                timeout=httpx.Timeout(Config.API_TIMEOUT, connect=30.0, read=Config.API_TIMEOUT, write=30.0),
+                limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+                retries=3
+            )
+            
+            client = OpenAI(
+                base_url=base_url,
+                api_key=api_key,
+                http_client=http_client
+            )
+            
+            # Determine which model to use based on retry count
+            current_model = model if retry_count == 0 else Config.FALLBACK_MODEL
+            
+            # Create the completion with robust settings
+            logger.info(f"Attempt {retry_count + 1}: Sending {len(content)} chars to OpenAI API")
+            logger.info(f"Using model: {current_model}")
+            logger.info(f"Base URL: {base_url}")
+            
+            # Truncate content if needed
+            truncated_content = content[:min(len(content), 20000)]
+            
+            response = client.chat.completions.create(
+                model=current_model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": truncated_content}
+                ],
+                temperature=temperature,
+                max_tokens=Config.MAX_TOKENS,
+                timeout=Config.API_TIMEOUT
+            )
+            
+            # Extract the response text
+            result = response.choices[0].message.content
+            
+            logger.info(f"Received {len(result)} chars response from OpenAI")
+            logger.info(f"OpenAI response preview: {result[:100]}...")
+            return result
+            
+        except Exception as e:
+            last_error = e
+            retry_count += 1
+            logger.error(f"Error (attempt {retry_count}/{max_retries}) processing content with OpenAI: {e}")
+            logger.error(f"Error type: {type(e).__name__}")
+            
+            # Wait before retrying
+            if retry_count < max_retries:
+                logger.info(f"Retrying in {Config.RETRY_DELAY} seconds...")
+                time.sleep(Config.RETRY_DELAY)
+                
+                # If this was the first attempt with the primary model, switch to fallback model
+                if retry_count == 1 and model == Config.MODEL:
+                    logger.info(f"Switching to fallback model: {Config.FALLBACK_MODEL}")
+    
+    # If we get here, all retries failed
+    logger.error(f"All {max_retries} attempts failed")
+    logger.error(f"Content length: {len(content)} chars")
+    logger.error(f"API key available: {'Yes' if api_key else 'No'}")
+    logger.error(f"Base URL: {base_url}")
+    logger.error(f"Last error: {last_error}")
+    
+    # Return a detailed fallback response with useful diagnostic info
+    if len(content.strip()) == 0:
+        fallback_response = "Unable to analyze content: No text was scraped from Google Lens search results. This may be due to Google's anti-bot measures or network connectivity issues."
+    else:
+        fallback_response = f"Unable to analyze content due to connection issues. Content summary: {len(content)} characters of scraped text from Google Lens search results."
+    
+    return fallback_response
 
 # Module can be run independently
 if __name__ == "__main__":

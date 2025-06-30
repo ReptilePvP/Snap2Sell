@@ -6,7 +6,7 @@
 set -e
 
 # Configuration
-PROJECT_ID="your-gcp-project-id"  # Replace with your GCP project ID
+PROJECT_ID="gen-lang-client-0815551598"  # Your GCP project ID
 SERVICE_NAME="snap2sell-openlens"
 REGION="us-central1"  # Change to your preferred region
 IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"

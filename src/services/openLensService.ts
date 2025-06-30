@@ -30,36 +30,67 @@ export const analyzeImageWithOpenLens = async (
     
     console.log(`OpenLens: Calling API server at ${openLensUrl}...`);
     
-    // Call your OpenLens API server
-    const response = await fetch(`${openLensUrl}/analyze`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        image: base64Image
-      })
-    });
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    
+    try {
+      // Call your OpenLens API server with timeout
+      const response = await fetch(`${openLensUrl}/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image
+        }),
+        signal: controller.signal
+      });
 
-    if (!response.ok) {
-      throw new Error(`OpenLens API error: ${response.status} ${response.statusText}`);
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`OpenLens API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data: OpenLensResponse = await response.json();
+      console.log('OpenLens: Analysis completed successfully');
+      
+      // Check if we got any scraped content
+      if (data.scraped_content_length === 0) {
+        console.warn('OpenLens: No scraped content was found (0 characters)');
+      }
+
+      // Parse the analysis to extract structured information
+      const analysisResult = parseOpenLensAnalysis(data.analysis, data);
+
+      // Format for display
+      return formatAnalysisForDisplay({
+        ...analysisResult,
+        apiProvider: ApiProvider.OPENLENS,
+        imageUrl,
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      throw fetchError;
     }
-
-    const data: OpenLensResponse = await response.json();
-    console.log('OpenLens: Analysis completed successfully');
-
-    // Parse the analysis to extract structured information
-    const analysisResult = parseOpenLensAnalysis(data.analysis, data);
-
-    // Format for display
-    return formatAnalysisForDisplay({
-      ...analysisResult,
-      apiProvider: ApiProvider.OPENLENS,
-      imageUrl,
-    });
   } catch (error) {
     console.error('Error during OpenLens analysis:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred while analyzing with OpenLens.';
+    
+    // Provide more detailed error information
+    let errorMessage = 'An unknown error occurred while analyzing with OpenLens.';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Check for specific error types
+      if (error.name === 'AbortError') {
+        errorMessage = 'OpenLens API request timed out after 30 seconds.';
+      } else if (errorMessage.includes('NetworkError') || errorMessage.includes('Failed to fetch')) {
+        errorMessage = 'Network error connecting to OpenLens API. Please check your internet connection and the API server status.';
+      }
+    }
+    
     throw new Error(`OpenLens API Error: ${errorMessage}`);
   }
 };

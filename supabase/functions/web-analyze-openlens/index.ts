@@ -53,13 +53,16 @@ serve(async (req) => {
 
     console.log('Image converted to base64, calling OpenLens API')
 
-    // Call your local OpenLens FastAPI server
-    const openLensResponse = await fetch('http://127.0.0.1:8000/analyze', {
+    // Call your Cloud Run OpenLens service
+    const OPENLENS_API_URL = 'https://snap2sell-openlens-156064765830.us-central1.run.app'
+    const openLensResponse = await fetch(`${OPENLENS_API_URL}/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ image: base64Image })
+      body: JSON.stringify({ image: base64Image }),
+      // Add timeout for Cloud Run requests
+      signal: AbortSignal.timeout(120000) // 2 minutes timeout
     })
 
     if (!openLensResponse.ok) {
@@ -75,11 +78,13 @@ serve(async (req) => {
       data: {
         id: data.request_id || `openlens_${Date.now()}`,
         title: extractTitle(data.analysis),
-        description: data.analysis.length > 200 
-          ? data.analysis.substring(0, 200) + '...'
-          : data.analysis,
+        description: data.analysis && data.analysis !== 'Error processing with OpenAI: Connection error.'
+          ? (data.analysis.length > 200 ? data.analysis.substring(0, 200) + '...' : data.analysis)
+          : 'OpenLens analysis completed with limited results',
         value: extractValue(data.analysis),
-        aiExplanation: data.analysis,
+        aiExplanation: data.analysis && data.analysis !== 'Error processing with OpenAI: Connection error.'
+          ? data.analysis
+          : 'OpenLens processed your image but encountered connectivity issues with the AI analysis service.',
         apiProvider: 'OpenLens',
         timestamp: Date.now(),
         imageUrl: imageUrl,
@@ -101,11 +106,26 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('OpenLens analysis error:', error)
+    
+    // Provide more detailed error information
+    let errorMessage = 'Analysis failed'
+    if (error instanceof Error) {
+      if (error.name === 'TimeoutError' || error.message.includes('timeout')) {
+        errorMessage = 'OpenLens service timed out. The analysis may take longer for complex images.'
+      } else if (error.message.includes('Failed to fetch image')) {
+        errorMessage = 'Could not access the image URL. Please ensure the image is publicly accessible.'
+      } else if (error.message.includes('OpenLens API error')) {
+        errorMessage = 'OpenLens analysis service is temporarily unavailable. Please try again.'
+      } else {
+        errorMessage = error.message
+      }
+    }
+    
     return new Response(
       JSON.stringify({ 
         success: false,
-        error: 'Analysis failed', 
-        message: error.message 
+        error: errorMessage, 
+        message: error instanceof Error ? error.message : 'Unknown error occurred'
       }), 
       { 
         status: 500, 

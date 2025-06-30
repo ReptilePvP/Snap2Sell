@@ -1,126 +1,207 @@
-import { useState } from 'react';
-import { debugConnection, logEnvironmentStatus } from '../utils/connectionDebug';
+import React, { useState, useEffect } from 'react';
+import { testOpenLensConnection, testOpenLensWithImage, getTestImage } from '../utils/openLensDebug';
+import { getOpenLensUrl, isOpenLensConfigured } from '../utils/providerAvailability';
+import Layout from '../components/Layout';
 
-const TroubleshootingPage = () => {
-  const [debugResults, setDebugResults] = useState<any>(null);
-  const [isRunning, setIsRunning] = useState(false);
+const TroubleshootingPage: React.FC = () => {
+  const [connectionStatus, setConnectionStatus] = useState<any>(null);
+  const [imageTestStatus, setImageTestStatus] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isImageTesting, setIsImageTesting] = useState(false);
+  const [envVariables, setEnvVariables] = useState<Record<string, boolean>>({});
 
-  const runDiagnostics = async () => {
-    setIsRunning(true);
+  useEffect(() => {
+    // Check environment variables
+    const env = {
+      'VITE_SUPABASE_URL': !!(import.meta as any).env?.VITE_SUPABASE_URL,
+      'VITE_SUPABASE_ANON_KEY': !!(import.meta as any).env?.VITE_SUPABASE_ANON_KEY,
+      'VITE_GEMINI_API_KEY': !!(import.meta as any).env?.VITE_GEMINI_API_KEY,
+      'VITE_SERPAPI_API_KEY': !!(import.meta as any).env?.VITE_SERPAPI_API_KEY,
+      'VITE_SEARCHAPI_API_KEY': !!(import.meta as any).env?.VITE_SEARCHAPI_API_KEY,
+      'VITE_OPENLENS_API_URL': !!(import.meta as any).env?.VITE_OPENLENS_API_URL,
+    };
+    setEnvVariables(env);
+  }, []);
+
+  const handleTestConnection = async () => {
+    setIsLoading(true);
     try {
-      const results = await debugConnection();
-      setDebugResults(results);
+      const result = await testOpenLensConnection();
+      setConnectionStatus(result);
     } catch (error) {
-      console.error('Error running diagnostics:', error);
+      setConnectionStatus({
+        success: false,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
     } finally {
-      setIsRunning(false);
+      setIsLoading(false);
     }
   };
 
-  const checkEnvironment = () => {
-    logEnvironmentStatus();
+  const handleTestImageAnalysis = async () => {
+    setIsImageTesting(true);
+    try {
+      const testImage = getTestImage();
+      const result = await testOpenLensWithImage(testImage);
+      setImageTestStatus(result);
+    } catch (error) {
+      setImageTestStatus({
+        success: false,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
+    } finally {
+      setIsImageTesting(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            Connection Troubleshooting
-          </h1>
+    <Layout>
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-6">OpenLens Troubleshooting</h1>
+        
+        <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Environment Variables</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Object.entries(envVariables).map(([key, value]) => (
+              <div key={key} className="flex items-center">
+                <span className="font-mono text-sm">{key}:</span>
+                <span className={`ml-2 px-2 py-1 rounded text-xs ${value ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
+                  {value ? 'Set' : 'Not Set'}
+                </span>
+              </div>
+            ))}
+          </div>
           
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Quick Diagnostics
-              </h2>
-              <div className="flex gap-3">
-                <button
-                  onClick={runDiagnostics}
-                  disabled={isRunning}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {isRunning ? 'Running...' : 'Run Connection Test'}
-                </button>
-                <button
-                  onClick={checkEnvironment}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                >
-                  Check Environment
-                </button>
-              </div>
-            </div>
-
-            {/* Common Issues */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Common Issues & Solutions
-              </h2>
-              <div className="space-y-4">
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-3">
-                  <h3 className="font-medium text-yellow-800 dark:text-yellow-200">Slow Authentication</h3>
-                  <ul className="mt-2 text-sm text-yellow-700 dark:text-yellow-300 list-disc list-inside">
-                    <li>Check your internet connection</li>
-                    <li>Verify Supabase environment variables are set correctly</li>
-                    <li>Clear browser cache and cookies</li>
-                    <li>Try refreshing the page</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3">
-                  <h3 className="font-medium text-red-800 dark:text-red-200">Authentication Timeout</h3>
-                  <ul className="mt-2 text-sm text-red-700 dark:text-red-300 list-disc list-inside">
-                    <li>Check if VITE_SUPABASE_URL is correctly set</li>
-                    <li>Verify VITE_SUPABASE_ANON_KEY is valid</li>
-                    <li>Ensure Supabase project is active and accessible</li>
-                    <li>Check network connectivity</li>
-                  </ul>
-                </div>
-
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3">
-                  <h3 className="font-medium text-blue-800 dark:text-blue-200">Environment Setup</h3>
-                  <ul className="mt-2 text-sm text-blue-700 dark:text-blue-300 list-disc list-inside">
-                    <li>Create a <code>.env</code> file in your project root</li>
-                    <li>Copy values from <code>.env.example</code></li>
-                    <li>Restart the development server after adding environment variables</li>
-                    <li>Check browser developer console for specific error messages</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Debug Results */}
-            {debugResults && (
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  Debug Results
-                </h2>
-                <div className="bg-gray-100 dark:bg-gray-900 rounded-md p-3 overflow-auto">
-                  <pre className="text-sm text-gray-800 dark:text-gray-200">
-                    {JSON.stringify(debugResults, null, 2)}
-                  </pre>
-                </div>
-              </div>
-            )}
-
-            {/* Instructions */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Manual Steps
-              </h2>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li>Open browser developer tools (F12)</li>
-                <li>Go to Console tab</li>
-                <li>Look for error messages in red</li>
-                <li>Check Network tab for failed requests</li>
-                <li>Verify environment variables are loaded correctly</li>
-              </ol>
-            </div>
+          <div className="mt-4">
+            <p className="text-sm">
+              OpenLens API URL: <span className="font-mono">{getOpenLensUrl()}</span>
+            </p>
+            <p className="text-sm mt-2">
+              {isOpenLensConfigured() 
+                ? '✅ Using production OpenLens API URL' 
+                : '⚠️ Using local development OpenLens API URL'}
+            </p>
           </div>
         </div>
+        
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Connection Test</h2>
+          <button
+            onClick={handleTestConnection}
+            disabled={isLoading}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {isLoading ? 'Testing...' : 'Test OpenLens Connection'}
+          </button>
+          
+          {connectionStatus && (
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <h3 className="font-semibold mb-2">Results:</h3>
+              <div className="space-y-2">
+                <p>
+                  Status: 
+                  <span className={`ml-2 px-2 py-1 rounded ${connectionStatus.success ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
+                    {connectionStatus.success ? 'Connected' : 'Failed'}
+                  </span>
+                </p>
+                <p>URL: <span className="font-mono text-sm">{connectionStatus.url}</span></p>
+                <p>Response Time: {connectionStatus.responseTime}ms</p>
+                {connectionStatus.statusCode && <p>Status Code: {connectionStatus.statusCode}</p>}
+                {connectionStatus.errorMessage && (
+                  <div>
+                    <p className="font-semibold text-red-600 dark:text-red-400">Error:</p>
+                    <pre className="bg-gray-100 dark:bg-gray-900 p-2 rounded overflow-x-auto text-sm">
+                      {connectionStatus.errorMessage}
+                    </pre>
+                  </div>
+                )}
+                {connectionStatus.responseData && (
+                  <div>
+                    <p className="font-semibold">Response:</p>
+                    <pre className="bg-gray-100 dark:bg-gray-900 p-2 rounded overflow-x-auto text-sm">
+                      {typeof connectionStatus.responseData === 'string' 
+                        ? connectionStatus.responseData 
+                        : JSON.stringify(connectionStatus.responseData, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Image Analysis Test</h2>
+          <button
+            onClick={handleTestImageAnalysis}
+            disabled={isImageTesting}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {isImageTesting ? 'Testing...' : 'Test Image Analysis'}
+          </button>
+          
+          {imageTestStatus && (
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <h3 className="font-semibold mb-2">Results:</h3>
+              <div className="space-y-2">
+                <p>
+                  Status: 
+                  <span className={`ml-2 px-2 py-1 rounded ${imageTestStatus.success ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
+                    {imageTestStatus.success ? 'Success' : 'Failed'}
+                  </span>
+                </p>
+                <p>URL: <span className="font-mono text-sm">{imageTestStatus.url}/analyze</span></p>
+                <p>Response Time: {imageTestStatus.responseTime}ms</p>
+                {imageTestStatus.statusCode && <p>Status Code: {imageTestStatus.statusCode}</p>}
+                {imageTestStatus.scraped_content_length !== undefined && (
+                  <p>
+                    Scraped Content Length: 
+                    <span className={`ml-2 ${imageTestStatus.scraped_content_length > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {imageTestStatus.scraped_content_length} characters
+                    </span>
+                  </p>
+                )}
+                {imageTestStatus.errorMessage && (
+                  <div>
+                    <p className="font-semibold text-red-600 dark:text-red-400">Error:</p>
+                    <pre className="bg-gray-100 dark:bg-gray-900 p-2 rounded overflow-x-auto text-sm">
+                      {imageTestStatus.errorMessage}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Troubleshooting Steps</h2>
+          <ol className="list-decimal pl-5 space-y-3">
+            <li>
+              <strong>Check OpenLens API URL:</strong> Ensure the <code>VITE_OPENLENS_API_URL</code> environment variable 
+              is correctly set in your Netlify deployment settings.
+            </li>
+            <li>
+              <strong>Verify OpenAI API Key:</strong> The OpenLens service requires a valid OpenAI API key. 
+              Check that <code>OPENAI_API_KEY</code> is set in your Cloud Run service.
+            </li>
+            <li>
+              <strong>Check Cloud Run Service:</strong> Verify that your OpenLens Cloud Run service is running 
+              and accessible. Check the logs in Google Cloud Console.
+            </li>
+            <li>
+              <strong>Google Lens Anti-Bot Measures:</strong> Google Lens may be blocking the scraper. 
+              Try updating the Selenium configuration in <code>selenium_lens_scraper.py</code> with 
+              additional anti-detection measures.
+            </li>
+            <li>
+              <strong>Cloud Run Resources:</strong> Ensure your Cloud Run service has sufficient memory 
+              and CPU resources to run a headless Chrome browser.
+            </li>
+          </ol>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

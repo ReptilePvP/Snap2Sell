@@ -21,21 +21,37 @@ def setup_anti_detection_driver():
     """Create a Chrome driver with anti-detection measures"""
     options = webdriver.ChromeOptions()
     
-    # Common user agent
-    user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+    # Randomize user agent from a list of modern browsers
+    user_agents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0'
+    ]
+    user_agent = random.choice(user_agents)
     options.add_argument(f'user-agent={user_agent}')
+    logger.info(f"Using user agent: {user_agent}")
     
-    # Disable automation flags
+    # Enhanced anti-detection settings
     options.add_argument('--disable-blink-features=AutomationControlled')
-    
-    # Various anti-detection settings
     options.add_experimental_option('excludeSwitches', ['enable-automation'])
     options.add_experimental_option('useAutomationExtension', False)
     
-    # Additional stability options that don't trigger detection
+    # Add window size randomization for more human-like behavior
+    window_sizes = [(1366, 768), (1440, 900), (1536, 864), (1920, 1080)]
+    window_size = random.choice(window_sizes)
+    options.add_argument(f'--window-size={window_size[0]},{window_size[1]}')
+    
+    # Additional stability and anti-detection options
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-notifications')
     options.add_argument('--disable-popup-blocking')
+    options.add_argument('--disable-infobars')
+    options.add_argument('--disable-save-password-bubble')
+    options.add_argument('--disable-translate')
+    options.add_argument('--disable-web-security')
+    options.add_argument('--allow-running-insecure-content')
     
     # Required for running in Docker container
     options.add_argument('--no-sandbox')
@@ -43,10 +59,16 @@ def setup_anti_detection_driver():
     
     # Headless mode - configurable
     if Config.HEADLESS_MODE:
-        options.add_argument('--headless')
+        # Use headless=new for better compatibility
+        options.add_argument('--headless=new')
     
     # Set page load strategy to EAGER for faster loading
     options.page_load_strategy = 'eager'
+    
+    # Add proxy if configured
+    if hasattr(Config, 'PROXY') and Config.PROXY:
+        options.add_argument(f'--proxy-server={Config.PROXY}')
+        logger.info(f"Using proxy: {Config.PROXY}")
     
     # Driver setup
     try:
@@ -64,30 +86,125 @@ def setup_anti_detection_driver():
             logger.error(f"Error with Chrome: {e}")
             raise
     
-    # Anti-detection script
+    # Enhanced anti-detection script with more comprehensive evasions
     driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
         'source': '''
+            // Hide webdriver property
             Object.defineProperty(navigator, 'webdriver', {
                 get: () => undefined
             });
             
-            // Additional evasions
+            // Randomize language settings
+            const languages = ['en-US', 'en-GB', 'en', 'en-CA'];
             Object.defineProperty(navigator, 'language', {
-                get: () => 'en-US'
+                get: () => languages[0]
             });
             Object.defineProperty(navigator, 'languages', {
-                get: () => ['en-US', 'en']
+                get: () => languages
             });
             
             // Override permissions
             const originalQuery = window.navigator.permissions.query;
             window.navigator.permissions.query = (parameters) => (
-                parameters.name === 'notifications' ?
+                parameters.name === 'notifications' || parameters.name === 'clipboard-read' ?
                 Promise.resolve({ state: Notification.permission }) :
                 originalQuery(parameters)
             );
+            
+            // Add fake plugins and mime types
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => {
+                    return [
+                        {
+                            0: {type: "application/pdf", suffixes: "pdf", description: "Portable Document Format"},
+                            name: "PDF Viewer",
+                            description: "Portable Document Format",
+                            filename: "internal-pdf-viewer"
+                        },
+                        {
+                            0: {type: "application/x-shockwave-flash", suffixes: "swf", description: "Shockwave Flash"},
+                            name: "Shockwave Flash",
+                            description: "Shockwave Flash",
+                            filename: "internal-flash-player"
+                        }
+                    ];
+                }
+            });
+            
+            // Spoof hardware concurrency
+            Object.defineProperty(navigator, 'hardwareConcurrency', {
+                get: () => 8
+            });
+            
+            // Spoof platform
+            Object.defineProperty(navigator, 'platform', {
+                get: () => "Win32"
+            });
+            
+            // Spoof user agent
+            Object.defineProperty(navigator, 'userAgent', {
+                get: () => window.navigator.userAgent.replace("Headless", "")
+            });
+            
+            // Spoof screen properties
+            Object.defineProperty(screen, 'width', { get: () => 1920 });
+            Object.defineProperty(screen, 'height', { get: () => 1080 });
+            Object.defineProperty(screen, 'availWidth', { get: () => 1920 });
+            Object.defineProperty(screen, 'availHeight', { get: () => 1040 });
+            Object.defineProperty(screen, 'colorDepth', { get: () => 24 });
+            Object.defineProperty(screen, 'pixelDepth', { get: () => 24 });
+            
+            // Spoof Chrome specific properties
+            window.chrome = {
+                app: {
+                    isInstalled: false,
+                },
+                webstore: {
+                    onInstallStageChanged: {},
+                    onDownloadProgress: {},
+                },
+                runtime: {
+                    PlatformOs: {
+                        MAC: 'mac',
+                        WIN: 'win',
+                        ANDROID: 'android',
+                        CROS: 'cros',
+                        LINUX: 'linux',
+                        OPENBSD: 'openbsd',
+                    },
+                    PlatformArch: {
+                        ARM: 'arm',
+                        X86_32: 'x86-32',
+                        X86_64: 'x86-64',
+                    },
+                    PlatformNaclArch: {
+                        ARM: 'arm',
+                        X86_32: 'x86-32',
+                        X86_64: 'x86-64',
+                    },
+                    RequestUpdateCheckStatus: {
+                        THROTTLED: 'throttled',
+                        NO_UPDATE: 'no_update',
+                        UPDATE_AVAILABLE: 'update_available',
+                    },
+                    OnInstalledReason: {
+                        INSTALL: 'install',
+                        UPDATE: 'update',
+                        CHROME_UPDATE: 'chrome_update',
+                        SHARED_MODULE_UPDATE: 'shared_module_update',
+                    },
+                    OnRestartRequiredReason: {
+                        APP_UPDATE: 'app_update',
+                        OS_UPDATE: 'os_update',
+                        PERIODIC: 'periodic',
+                    },
+                },
+            };
         '''
     })
+    
+    # Add random delay to simulate human behavior
+    time.sleep(random.uniform(0.5, 2.0))
     
     return driver
 
@@ -153,6 +270,16 @@ def click_lens_button(driver):
     selectors = [
         # Primary selector based on data-attribute
         "[data-base-lens-url='https://lens.google.com']",
+        # Alternative selectors for Google Lens button
+        "a[href*='lens.google.com']",
+        "button[data-ved][jsname]",  # Google's button pattern
+        "[data-tooltip*='Lens']",
+        "[aria-label*='Lens']",
+        "[title*='Lens']",
+        "div[data-hveid] a[href*='lens']",
+        # More generic patterns
+        "a[href*='/search'][href*='tbm=isch']",  # Image search patterns
+        "[data-ved*='CAE'] a",  # Common Google link pattern
     ]
     
     for selector in selectors:
@@ -171,6 +298,71 @@ def click_lens_button(driver):
             return True
         except Exception as e:
             logger.debug(f"Selector {selector} failed: {e}")
+    
+    # Try JavaScript-based search for Lens button
+    try:
+        logger.info("Trying JavaScript approach to find Lens button...")
+        lens_buttons = driver.execute_script("""
+            function findLensButton() {
+                // Look for elements containing "lens" or similar
+                let buttons = [];
+                
+                // Search all clickable elements
+                document.querySelectorAll('a, button, [role="button"], [onclick]').forEach(el => {
+                    let text = (el.textContent || '').toLowerCase();
+                    let href = (el.href || '').toLowerCase();
+                    let title = (el.title || '').toLowerCase();
+                    let ariaLabel = (el.getAttribute('aria-label') || '').toLowerCase();
+                    
+                    if (text.includes('lens') || 
+                        href.includes('lens') || 
+                        title.includes('lens') || 
+                        ariaLabel.includes('lens')) {
+                        buttons.push(el);
+                    }
+                });
+                
+                return buttons;
+            }
+            
+            return findLensButton();
+        """)
+        
+        if lens_buttons and len(lens_buttons) > 0:
+            logger.info(f"Found {len(lens_buttons)} potential Lens buttons via JavaScript")
+            for button in lens_buttons:
+                try:
+                    # Try clicking each button
+                    action = ActionChains(driver)
+                    action.move_to_element(button).pause(0.2).perform()
+                    button.click()
+                    time.sleep(2)
+                    
+                    # Check if we're now on a Lens page or similar
+                    current_url = driver.current_url
+                    if 'lens' in current_url.lower():
+                        logger.info("Successfully navigated to Lens via JavaScript button")
+                        return True
+                        
+                except Exception as e:
+                    logger.debug(f"JavaScript button click failed: {e}")
+                    continue
+                    
+    except Exception as e:
+        logger.error(f"JavaScript approach failed: {e}")
+    
+    # Last resort: try to navigate directly to Google Lens
+    try:
+        logger.info("Trying direct navigation to Google Lens...")
+        driver.get("https://lens.google.com/")
+        time.sleep(3)
+        
+        if 'lens.google.com' in driver.current_url:
+            logger.info("Successfully navigated directly to Google Lens")
+            return True
+            
+    except Exception as e:
+        logger.error(f"Direct navigation failed: {e}")
     
     # If we get here, all selectors failed
     logger.error("Could not find Google Lens button")
@@ -417,55 +609,123 @@ def extract_links_and_descriptions(driver, csv_path):
 
 def run_google_lens_search(image_path, csv_path):
     """Run a Google Lens search with the provided image and save results to CSV"""
-    driver = setup_anti_detection_driver()
+    max_retries = 3
+    retry_count = 0
     
-    try:
-        # Start at Google.com
-        url = "https://www.google.com"
-        logger.info(f"Opening {url}...")
-        driver.get(url)
-        
-        # Handle cookie consent dialog
-        handle_cookie_consent(driver)
-        
-        # Set window size
-        driver.set_window_size(1366, 768)
-        
-        # Wait for page to load completely
-        wait_for_page_load(driver)
-        
-        # Click on Google Lens button
-        if not click_lens_button(driver):
-            logger.error("Failed to access Google Lens - aborting")
-            return
+    while retry_count < max_retries:
+        driver = None
+        try:
+            logger.info(f"Attempt {retry_count + 1}/{max_retries} to run Google Lens search")
+            driver = setup_anti_detection_driver()
             
-        # Wait for Google Lens interface to load
-        wait_for_page_load(driver)
-        
-        # Find and click import option
-        file_input = find_and_click_import_option(driver)
-        
-        # Upload image file
-        if not upload_image(driver, file_input, image_path):
-            logger.error("Failed to upload image - aborting")
-            return
+            # Add random delay between actions to appear more human-like
+            def human_delay():
+                time.sleep(random.uniform(1.0, 3.0))
             
-        # Wait for search results to load
-        logger.info("Waiting for search results...")
-        time.sleep(5)  # Initial wait
-        wait_for_page_load(driver)
+            # Start at Google.com
+            url = "https://www.google.com"
+            logger.info(f"Opening {url}...")
+            driver.get(url)
+            human_delay()
+            
+            # Handle cookie consent dialog
+            handle_cookie_consent(driver)
+            human_delay()
+            
+            # Wait for page to load completely
+            wait_for_page_load(driver)
+            
+            # Try direct lens approach first
+            try:
+                logger.info("Trying direct navigation to Google Lens...")
+                driver.get("https://lens.google.com/")
+                human_delay()
+                wait_for_page_load(driver)
+            except Exception as e:
+                logger.warning(f"Direct navigation failed: {e}, trying alternative method")
+                # If direct navigation fails, go back to Google.com and try the button
+                driver.get(url)
+                human_delay()
+                wait_for_page_load(driver)
+                
+                # Click on Google Lens button
+                if not click_lens_button(driver):
+                    logger.error("Failed to access Google Lens - trying alternative URL")
+                    # Try another alternative URL
+                    driver.get("https://www.google.com/imghp")
+                    human_delay()
+                    wait_for_page_load(driver)
+                    
+                    # Look for camera icon on Google Images
+                    try:
+                        camera_icon = driver.find_element(By.CSS_SELECTOR, "[aria-label*='camera' i], [title*='camera' i], [aria-label*='search by image' i]")
+                        camera_icon.click()
+                        human_delay()
+                    except Exception as e:
+                        logger.error(f"Failed to find camera icon: {e}")
+                        raise
+            
+            # Wait for Google Lens interface to load
+            wait_for_page_load(driver)
+            human_delay()
+            
+            # Find and click import option
+            file_input = find_and_click_import_option(driver)
+            
+            # Upload image file
+            if not upload_image(driver, file_input, image_path):
+                logger.error("Failed to upload image - aborting")
+                retry_count += 1
+                continue
+            
+            # Wait for search results to load with progressive waiting
+            logger.info("Waiting for search results...")
+            for i in range(3):  # Try multiple wait times
+                time.sleep(3 + i*2)  # Increase wait time with each iteration
+                wait_for_page_load(driver)
+                
+                # Check if we have any results
+                links = driver.find_elements(By.TAG_NAME, "a")
+                if len(links) > 10:  # Arbitrary threshold to determine if results loaded
+                    logger.info(f"Found {len(links)} links, results appear to be loaded")
+                    break
+                logger.info(f"Only found {len(links)} links, waiting longer...")
+            
+            # Extract all links and descriptions
+            results = extract_links_and_descriptions(driver, csv_path)
+            
+            # Verify we got some results
+            if results and len(results) > 0:
+                logger.info(f"Successfully extracted {len(results)} results")
+                return True
+            else:
+                logger.warning("No results extracted, may need to retry")
+                retry_count += 1
+                continue
         
-        # Extract all links and descriptions
-        extract_links_and_descriptions(driver, csv_path)
-        return True
-        
-    except Exception as e:
-        logger.error(f"Error in Google Lens search: {e}")
-        return False
-    finally:
-        # Always close the driver
-        logger.info("Closing browser...")
-        driver.quit()
+        except Exception as e:
+            logger.error(f"Error in Google Lens search attempt {retry_count + 1}: {e}")
+            retry_count += 1
+            # Take screenshot of error state if possible
+            try:
+                if driver:
+                    error_screenshot_path = f"{os.path.dirname(csv_path)}/error_screenshot_{retry_count}.png"
+                    driver.save_screenshot(error_screenshot_path)
+                    logger.info(f"Error screenshot saved to {error_screenshot_path}")
+            except:
+                pass
+        finally:
+            # Always close the driver
+            if driver:
+                logger.info("Closing browser...")
+                try:
+                    driver.quit()
+                except:
+                    pass
+    
+    # If we've exhausted all retries
+    logger.error(f"Failed to complete Google Lens search after {max_retries} attempts")
+    return False
 
 # Module can be run independently
 if __name__ == "__main__":

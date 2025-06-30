@@ -7,7 +7,15 @@ class Config:
     # Selenium settings
     HEADLESS_MODE = True
     
-    # Image settings (this is only when usung the fastapi backend)
+    # Optional proxy configuration (format: "http://user:pass@host:port" or "http://host:port")
+    # Set to None to disable proxy
+    PROXY = None
+    
+    # Retry settings
+    MAX_RETRIES = 3
+    RETRY_DELAY = 5  # seconds between retries
+    
+    # Image settings (this is only when using the fastapi backend)
     IMAGE_FILE_EXTENSION = "png"
     
     # Scraper settings
@@ -19,17 +27,29 @@ class Config:
     CSV_DIR = "../data/csv"
     TXT_DIR = "../data/txt"
     
-    #What to remove at the end of pipeline
+    # What to remove at the end of pipeline
     REMOVE_IMAGES = True
-    REMOVE_CSVS = False 
+    REMOVE_CSVS = False
     REMOVE_TXT = False
+    
+    # Timeouts
+    SELENIUM_PAGE_LOAD_TIMEOUT = 30  # seconds
+    SELENIUM_ELEMENT_TIMEOUT = 10    # seconds
+    API_TIMEOUT = 60                 # seconds
     
     # OpenAI API settings
     BASE_URL = "https://api.openai.com/v1"
     MODEL = "gpt-4o-mini"  # Good balance of performance and cost
     
-    #LLM parameters
+    # Fallback model if primary is unavailable
+    FALLBACK_MODEL = "gpt-3.5-turbo"
+    
+    # LLM parameters
     TEMPERATURE = 0.7
+    MAX_TOKENS = 1000
+    
+    # Debug mode - set to True for additional logging
+    DEBUG_MODE = False
     
     #LLM Prompt
     SYSTEM_PROMPT = "You are an AI assistant analyzing content from websites found through Google Lens image search. " \
