@@ -20,15 +20,18 @@ export const analyzeImageWithOpenLens = async (
   imageUrl: string
 ): Promise<AnalysisResult> => {
   try {
+    // Check if OpenLens is available (local development or production server)
+    const openLensUrl = (import.meta as any).env?.VITE_OPENLENS_API_URL || 'http://127.0.0.1:8000';
+    
     console.log('OpenLens: Converting image URL to base64...');
     
     // Convert image URL to base64
     const base64Image = await imageUrlToBase64(imageUrl);
     
-    console.log('OpenLens: Calling local FastAPI server...');
+    console.log(`OpenLens: Calling API server at ${openLensUrl}...`);
     
-    // Call your OpenLens FastAPI server directly
-    const response = await fetch('http://127.0.0.1:8000/analyze', {
+    // Call your OpenLens API server
+    const response = await fetch(`${openLensUrl}/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
