@@ -108,6 +108,9 @@ Follow these steps to get a local copy of Snap2Sell up and running.
         ```
 
 4.  **Configure Environment Variables:**
+    
+    > 📋 **See [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md) for detailed environment variable configuration**
+    
     *   Create a `.env` file in the root directory:
         ```sh
         cp .env.example .env
@@ -122,12 +125,13 @@ Follow these steps to get a local copy of Snap2Sell up and running.
         ```
 
 5.  **Configure OpenLens:**
-    *   Set up OpenLens API key:
+    *   For local development, create OpenAI API key file:
         ```sh
         cd openlens-app/src
         cp secret_key.py.example secret_key.py
         ```
-    *   Edit `secret_key.py` and add your OpenAI API key:
+    *   Edit `secret_key.py` and add your OpenAI API key
+    *   **For production**: Use Google Cloud Secret Manager (see deployment guide)
         ```python
         API_KEY = "your-openai-api-key-here"
         ```

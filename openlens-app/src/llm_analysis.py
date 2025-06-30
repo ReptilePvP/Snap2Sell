@@ -3,7 +3,6 @@ from openai import OpenAI
 import logging
 import argparse
 from config import Config
-from secret_key import API_KEY
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -22,9 +21,20 @@ def get_llm_analysis(content, system_prompt=None, base_url=None, model=None, tem
     # Use default temperature if not provided
     if temperature is None:
         temperature = Config.TEMPERATURE
-    # Use default API key if not provided
+    # Use API key from environment variable or fallback
     if api_key is None:
-        api_key = API_KEY
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            # Try to import from secret_key.py as fallback for local development
+            try:
+                from secret_key import API_KEY
+                api_key = API_KEY
+                logger.info("Using API key from secret_key.py (local development)")
+            except ImportError:
+                logger.error("No OpenAI API key found! Set OPENAI_API_KEY environment variable or create secret_key.py")
+                raise ValueError("OpenAI API key not configured")
+        else:
+            logger.info("Using API key from environment variable")
         
     try:
         # Initialize the OpenAI client

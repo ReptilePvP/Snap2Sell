@@ -20,9 +20,16 @@ docker build -t ${IMAGE_NAME}:latest .
 echo "🔄 Pushing image to Google Container Registry..."
 docker push ${IMAGE_NAME}:latest
 
-# Step 2: Create secret for OpenAI API key (if not exists)
-echo "🔐 Creating secret for OpenAI API key..."
-echo -n "your-openai-api-key-here" | gcloud secrets create openai-api-key --data-file=- --project=${PROJECT_ID} || echo "Secret already exists"
+# Step 2: Create/Update secret for OpenAI API key
+echo "🔐 Creating/updating secret for OpenAI API key..."
+echo "Please enter your OpenAI API key when prompted (it will be hidden):"
+read -s OPENAI_API_KEY
+
+# Create or update the secret
+echo -n "$OPENAI_API_KEY" | gcloud secrets create openai-api-key --data-file=- --project=${PROJECT_ID} 2>/dev/null || \
+echo -n "$OPENAI_API_KEY" | gcloud secrets versions add openai-api-key --data-file=- --project=${PROJECT_ID}
+
+echo "✅ Secret updated successfully"
 
 # Step 3: Deploy to Cloud Run
 echo "🌐 Deploying to Cloud Run..."

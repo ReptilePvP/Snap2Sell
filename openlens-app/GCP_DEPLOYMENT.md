@@ -28,23 +28,29 @@ export PROJECT_ID="your-gcp-project-id"
 gcloud config set project $PROJECT_ID
 ```
 
-### 3. Create OpenAI Secret
+### 3. Deploy with Your API Key
 
-```bash
-# Store your OpenAI API key securely
-echo -n "your-actual-openai-api-key" | gcloud secrets create openai-api-key --data-file=-
-```
-
-### 4. Build and Deploy
+The deployment script will securely prompt for your OpenAI API key:
 
 ```bash
 # Make the deploy script executable
 chmod +x deploy-gcp.sh
 
-# Edit the script to set your PROJECT_ID
-# Then run:
+# Edit the script to set your PROJECT_ID, then run:
 ./deploy-gcp.sh
+# When prompted, enter your OpenAI API key (it will be hidden for security)
 ```
+
+**Alternative: Manual Secret Creation**
+```bash
+# If you prefer to set the secret manually:
+echo -n "your-new-openai-api-key-here" | gcloud secrets create openai-api-key --data-file=-
+
+# Or update existing secret:
+echo -n "your-new-openai-api-key-here" | gcloud secrets versions add openai-api-key --data-file=-
+```
+
+**⚠️ IMPORTANT**: Never commit API keys to your repository!
 
 ## Manual Deployment (Alternative)
 
