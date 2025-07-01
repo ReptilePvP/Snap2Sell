@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../hooks/useAuth';
 import { useStats } from '../hooks/useStats';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { StatsSkeleton, ListSkeleton } from '../components/Skeleton';
 
 import { useRecentActivity } from '../hooks/useRecentActivity';
 import { formatDistanceToNow } from 'date-fns';
@@ -91,20 +91,24 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {statsData.map((stat) => (
-          <div key={stat.label} className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {stat.label}
+      {statsLoading ? (
+        <StatsSkeleton />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {statsData.map((stat) => (
+            <div key={stat.label} className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {stat.label}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div>
@@ -144,9 +148,8 @@ const HomePage: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {activityLoading ? (
-              <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-                <LoadingSpinner />
-                <p>Loading recent activity...</p>
+              <div className="p-6">
+                <ListSkeleton items={3} />
               </div>
             ) : recentActivity.length > 0 ? (
               recentActivity.map((item) => (

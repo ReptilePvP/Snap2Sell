@@ -5,6 +5,7 @@ import { analyzeImageWithGeminiAPI, uploadImageDirectly } from '../services/apiS
 import { AnalysisResult } from '../types';
 import ImageUpload from '../components/ImageUpload';
 import ResultCard from '../components/ResultCard';
+import AnalysisLoading from '../components/AnalysisLoading';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const CameraPage: React.FC = () => {
@@ -14,6 +15,7 @@ const CameraPage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [loadingStage, setLoadingStage] = useState<'uploading' | 'analyzing' | 'processing' | 'complete'>('uploading');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -81,14 +83,22 @@ const CameraPage: React.FC = () => {
 
     setIsUploading(true);
     setIsAnalyzing(true);
+    setLoadingStage('uploading');
 
     try {
       // Upload image first
       const imageUrl = await uploadImageDirectly(selectedImage);
       setIsUploading(false);
+      setLoadingStage('analyzing');
       
       // Then analyze with Gemini
       const result = await analyzeImageWithGeminiAPI(imageUrl);
+      setLoadingStage('processing');
+      
+      // Brief processing stage
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setLoadingStage('complete');
+      
       setAnalysisResult(result);
       showToast('success', 'Analysis complete!', 'Your image has been analyzed successfully.');
     } catch (error) {
@@ -105,6 +115,7 @@ const CameraPage: React.FC = () => {
     setAnalysisResult(null);
     setIsUploading(false);
     setIsAnalyzing(false);
+    setLoadingStage('uploading');
     stopCamera();
   };
 
@@ -130,15 +141,13 @@ const CameraPage: React.FC = () => {
 
   if (isAnalyzing) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-12">
-        <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          Analyzing with Gemini AI...
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          This may take a few moments. Please wait while we process your image.
-        </p>
-      </div>
+      <AnalysisLoading 
+        currentStage={loadingStage}
+        apiProvider="Gemini AI"
+        onComplete={() => {
+          // Will automatically hide when stage changes to complete
+        }}
+      />
     );
   }
 

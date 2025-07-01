@@ -8,6 +8,7 @@ import { useToast } from '../../hooks/useToast';
 import { useAuth } from '../../hooks/useAuth';
 import ImageUpload from '../../components/ImageUpload';
 import ResultCard from '../../components/ResultCard';
+import AnalysisLoading from '../../components/AnalysisLoading';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface AnalysisPageBaseProps {
@@ -33,6 +34,7 @@ const AnalysisPageBase: React.FC<AnalysisPageBaseProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loadingStage, setLoadingStage] = useState<'uploading' | 'analyzing' | 'processing' | 'complete'>('uploading');
 
   const handleImageSelected = useCallback((file: File) => {
     setSelectedImage(file);
@@ -52,14 +54,22 @@ const AnalysisPageBase: React.FC<AnalysisPageBaseProps> = ({
     setIsUploading(true);
     setIsAnalyzing(true);
     setError(null);
+    setLoadingStage('uploading');
 
     try {
       // Upload image first
       const imageUrl = await uploadImageDirectly(selectedImage);
       setIsUploading(false);
+      setLoadingStage('analyzing');
       
       // Then analyze
       const result = await analyzeFunction(imageUrl);
+      setLoadingStage('processing');
+      
+      // Brief processing stage
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setLoadingStage('complete');
+      
       setAnalysisResult(result);
       
       // Save to database if user is authenticated
@@ -93,7 +103,7 @@ const AnalysisPageBase: React.FC<AnalysisPageBaseProps> = ({
       setIsUploading(false);
       setIsAnalyzing(false);
     }
-  }, [selectedImage, analyzeFunction, apiProvider, showToast, isAuthenticated]);
+  }, [selectedImage, analyzeFunction, apiProvider, showToast, isAuthenticated, setLoadingStage]);
 
   const resetAnalysis = useCallback(() => {
     setSelectedImage(null);
@@ -126,15 +136,13 @@ const AnalysisPageBase: React.FC<AnalysisPageBaseProps> = ({
 
   if (isAnalyzing) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-12">
-        <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          {isUploading ? 'Uploading image...' : `Analyzing with ${apiProvider}...`}
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          This may take a few moments. Please wait while we process your image.
-        </p>
-      </div>
+      <AnalysisLoading 
+        currentStage={loadingStage}
+        apiProvider={apiProvider}
+        onComplete={() => {
+          // Will automatically hide when stage changes to complete
+        }}
+      />
     );
   }
 

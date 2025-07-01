@@ -6,7 +6,7 @@ import { statsEmitter } from '../utils/statsEmitter';
 import { useToast } from '../hooks/useToast';
 import { useAuth } from '../hooks/useAuth';
 import ResultCard from '../components/ResultCard';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { ListSkeleton } from '../components/Skeleton';
 
 const SavedPage: React.FC = () => {
   const [savedItems, setSavedItems] = useState<ScanHistoryItem[]>([]);
@@ -95,11 +95,14 @@ const SavedPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-6xl mx-auto text-center py-12">
-        <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Loading saved items...
-        </h2>
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex items-center space-x-3 mb-6">
+          <StarIcon className="h-8 w-8 text-yellow-500" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Saved Items
+          </h1>
+        </div>
+        <ListSkeleton items={6} />
       </div>
     );
   }

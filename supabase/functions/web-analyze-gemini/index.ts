@@ -128,9 +128,9 @@ Remember: Respond with ONLY the JSON object, no other text.`;
 
     console.log('Calling Gemini API...');
     
-    // Create a timeout controller
+    // Create a timeout controller with increased timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
     
     let geminiData;
     try {
@@ -161,7 +161,7 @@ Remember: Respond with ONLY the JSON object, no other text.`;
     } catch (fetchError) {
       clearTimeout(timeoutId);
       if (fetchError.name === 'AbortError') {
-        throw new Error('Gemini API request timed out after 30 seconds');
+        throw new Error('Gemini API request timed out after 90 seconds');
       }
       throw fetchError;
     }
