@@ -22,6 +22,9 @@ export { WebAnalysisService } from './webAnalysisService';
 // Analysis utilities
 export * from './analysisUtils';
 
+// Image enhancement services
+export { imageEnhancementService } from './imageEnhancementService';
+
 // Supabase client
 export { supabase } from './supabaseClient';
 

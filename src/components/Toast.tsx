@@ -40,15 +40,15 @@ const Toast: React.FC<ToastProps> = ({ toast, onClose }) => {
   const Icon = icons[type];
 
   return (
-    <div className={`max-w-sm w-full border rounded-lg p-4 shadow-lg animate-fade-in ${colors[type]}`}>
+    <div className={`max-w-sm w-full border rounded-lg p-4 shadow-lg animate-fade-in ${colors[type]} break-words`}>
       <div className="flex">
         <div className="flex-shrink-0">
           <Icon className={`h-5 w-5 ${iconColors[type]}`} />
         </div>
-        <div className="ml-3 w-0 flex-1">
-          <p className="text-sm font-medium">{title}</p>
+        <div className="ml-3 flex-1 min-w-0">
+          <p className="text-sm font-medium break-words">{title}</p>
           {message && (
-            <p className="mt-1 text-sm opacity-90">{message}</p>
+            <p className="mt-1 text-sm opacity-90 break-words">{message}</p>
           )}
         </div>
         <div className="ml-4 flex-shrink-0 flex">

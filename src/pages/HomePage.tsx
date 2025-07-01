@@ -43,6 +43,13 @@ const HomePage: React.FC = () => {
       color: 'bg-purple-500',
     },
     {
+      name: 'Image Enhancements',
+      description: 'Auto-rotation, background removal, dimensions',
+      icon: SparklesIcon,
+      href: '/demo/enhancements',
+      color: 'bg-pink-500',
+    },
+    {
       name: 'Recent Scans',
       description: 'View your analysis history',
       icon: ClockIcon,
