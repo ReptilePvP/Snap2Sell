@@ -18,20 +18,22 @@ from config import Config
 logger = logging.getLogger(__name__)
 
 def setup_anti_detection_driver():
-    """Create a Chrome driver with anti-detection measures"""
+    """Create a Chrome driver with comprehensive anti-detection measures"""
     options = webdriver.ChromeOptions()
     
     # Randomize user agent from a list of modern browsers
     user_agents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0'
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     ]
     user_agent = random.choice(user_agents)
     options.add_argument(f'user-agent={user_agent}')
-    logger.info(f"Using user agent: {user_agent}")
+    logger.info(f"Using user agent: {user_agent[:50]}...")
     
     # Enhanced anti-detection settings
     options.add_argument('--disable-blink-features=AutomationControlled')
@@ -39,7 +41,7 @@ def setup_anti_detection_driver():
     options.add_experimental_option('useAutomationExtension', False)
     
     # Add window size randomization for more human-like behavior
-    window_sizes = [(1366, 768), (1440, 900), (1536, 864), (1920, 1080)]
+    window_sizes = [(1366, 768), (1440, 900), (1536, 864), (1920, 1080), (1600, 900)]
     window_size = random.choice(window_sizes)
     options.add_argument(f'--window-size={window_size[0]},{window_size[1]}')
     
@@ -48,6 +50,32 @@ def setup_anti_detection_driver():
     options.add_argument('--disable-notifications')
     options.add_argument('--disable-popup-blocking')
     options.add_argument('--disable-infobars')
+    options.add_argument('--disable-save-password-bubble')
+    options.add_argument('--disable-translate')
+    options.add_argument('--disable-features=VizDisplayCompositor')
+    options.add_argument('--disable-features=TranslateUI')
+    options.add_argument('--disable-ipc-flooding-protection')
+    options.add_argument('--disable-hang-monitor')
+    options.add_argument('--disable-client-side-phishing-detection')
+    options.add_argument('--disable-sync')
+    options.add_argument('--disable-web-security')
+    options.add_argument('--allow-running-insecure-content')
+    options.add_argument('--no-first-run')
+    options.add_argument('--disable-default-apps')
+    options.add_argument('--disable-background-timer-throttling')
+    options.add_argument('--disable-backgrounding-occluded-windows')
+    options.add_argument('--disable-renderer-backgrounding')
+    
+    # Required for running in containers
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    
+    # Headless mode configuration
+    if Config.HEADLESS_MODE:
+        options.add_argument('--headless=new')
+    
+    # Set page load strategy for better performance
+    options.page_load_strategy = 'eager'
     options.add_argument('--disable-save-password-bubble')
     options.add_argument('--disable-translate')
     options.add_argument('--disable-web-security')
@@ -270,27 +298,157 @@ def click_lens_button(driver):
     selectors = [
         # Primary selector based on data-attribute
         "[data-base-lens-url='https://lens.google.com']",
+        # Alternative data attributes
+        "[data-ved*='lens']",
+        "[data-name='lens']",
+        # Button/div with lens in data attributes
+        "[data-*='lens']",
+        # Camera/lens icon buttons
+        "div[role='button'][aria-label*='lens']",
+        "div[role='button'][aria-label*='Lens']", 
+        "div[role='button'][aria-label*='camera']",
+        "div[role='button'][aria-label*='Camera']",
+        # Specific lens button patterns
+        "div[jsaction*='lens']",
+        "div[data-ved][jsaction*='click']",
+        # Camera icon SVG containers
+        "div[role='button'] svg[viewBox*='0 0 24 24']",
+        # Text-based fallbacks
+        "div[role='button']:contains('lens')",
+        "div[role='button']:contains('Lens')",
+        # Generic button patterns near search box
+        "div.nDcEnd div[role='button']",
+        "div[class*='camera'] div[role='button']",
+        # Last resort - any clickable element with lens attributes
+        "*[data-*='lens'][role='button']",
+        "*[aria-label*='lens']",
+        "*[title*='lens']",
+        "*[title*='Lens']"
     ]
     
     for selector in selectors:
         try:
             logger.info(f"Trying selector: {selector}")
-            wait = WebDriverWait(driver, 5)
-            lens_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            wait = WebDriverWait(driver, 3)  # Shorter timeout for faster checking
+            
+            # Special handling for :contains() selectors
+            if ':contains(' in selector:
+                elements = driver.execute_script(f"""
+                    return Array.from(document.querySelectorAll('div[role="button"]')).filter(el => 
+                        el.textContent && el.textContent.toLowerCase().includes('lens')
+                    );
+                """)
+                if elements and len(elements) > 0:
+                    lens_button = elements[0]
+                else:
+                    continue
+            else:
+                lens_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
             
             # Move mouse to button before clicking (more human-like)
             action = ActionChains(driver)
             action.move_to_element(lens_button).pause(0.3).perform()
             
-            logger.info("Found Google Lens button, clicking...")
+            logger.info(f"Found Google Lens button with selector '{selector}', clicking...")
             lens_button.click()
-            time.sleep(1)
+            time.sleep(2)  # Wait longer for lens interface to load
             return True
         except Exception as e:
             logger.debug(f"Selector {selector} failed: {e}")
     
+    # JavaScript-based fallback approach
+    try:
+        logger.info("Trying JavaScript-based approach to find lens button...")
+        lens_button = driver.execute_script("""
+            // Look for buttons with lens-related attributes or content
+            function findLensButton() {
+                const selectors = [
+                    'div[role="button"][data-base-lens-url]',
+                    'div[role="button"][data-ved*="lens"]',
+                    'div[role="button"][aria-label*="lens"]',
+                    'div[role="button"][aria-label*="Lens"]',
+                    'div[role="button"][aria-label*="camera"]',
+                    'div[role="button"][aria-label*="Camera"]',
+                    'div[jsaction*="lens"]',
+                    'div[data-ved][jsaction*="click"]'
+                ];
+                
+                for (let selector of selectors) {
+                    const elements = document.querySelectorAll(selector);
+                    if (elements.length > 0) {
+                        return elements[0];
+                    }
+                }
+                
+                // Look for camera/lens icons in SVG
+                const svgButtons = document.querySelectorAll('div[role="button"] svg');
+                for (let svg of svgButtons) {
+                    const paths = svg.querySelectorAll('path');
+                    for (let path of paths) {
+                        // Check if path looks like camera/lens icon (common patterns)
+                        const d = path.getAttribute('d');
+                        if (d && (d.includes('M9 2') || d.includes('M12 2') || d.includes('circle'))) {
+                            return svg.closest('div[role="button"]');
+                        }
+                    }
+                }
+                
+                // Look for buttons containing text about lens/camera
+                const allButtons = document.querySelectorAll('div[role="button"]');
+                for (let btn of allButtons) {
+                    const text = btn.textContent || '';
+                    if (text.toLowerCase().includes('lens') || 
+                        text.toLowerCase().includes('camera') ||
+                        btn.querySelector('svg')) {
+                        return btn;
+                    }
+                }
+                
+                return null;
+            }
+            
+            return findLensButton();
+        """)
+        
+        if lens_button:
+            logger.info("Found lens button via JavaScript, clicking...")
+            action = ActionChains(driver)
+            action.move_to_element(lens_button).pause(0.3).perform()
+            lens_button.click()
+            time.sleep(2)
+            return True
+    except Exception as e:
+        logger.debug(f"JavaScript approach failed: {e}")
+    
+    # Final fallback - look for any button in the search area
+    try:
+        logger.info("Final fallback: looking for any button near search area...")
+        search_buttons = driver.find_elements(By.CSS_SELECTOR, "div[role='button']")
+        if search_buttons:
+            # Try the first few buttons
+            for i, button in enumerate(search_buttons[:5]):
+                try:
+                    logger.info(f"Trying button {i+1}: {button.get_attribute('aria-label') or 'No label'}")
+                    action = ActionChains(driver)
+                    action.move_to_element(button).pause(0.3).perform()
+                    button.click()
+                    time.sleep(2)
+                    
+                    # Check if we're now on a lens-like page
+                    current_url = driver.current_url
+                    if 'lens' in current_url.lower() or 'imgres' in current_url:
+                        logger.info(f"Button {i+1} seems to have worked - URL changed to: {current_url}")
+                        return True
+                    else:
+                        logger.debug(f"Button {i+1} didn't lead to lens page, trying next...")
+                except Exception as e:
+                    logger.debug(f"Button {i+1} failed: {e}")
+                    
+    except Exception as e:
+        logger.debug(f"Final fallback failed: {e}")
+    
     # If we get here, all selectors failed
-    logger.error("Could not find Google Lens button")
+    logger.error("Could not find Google Lens button with any strategy")
     return False
 
 def find_and_click_import_option(driver):
@@ -298,17 +456,34 @@ def find_and_click_import_option(driver):
     logger.info("Looking for import option...")
     
     # Wait a moment for Lens page to load
-    time.sleep(2)
+    time.sleep(3)
     
     # Different selectors for the import button/link, ordered by specificity
     import_selectors = [  
-        "//span[contains(text(), 'file')]",        # English  
+        # Text-based selectors in multiple languages
+        "//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'file')]",
+        "//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'upload')]",
+        "//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'import')]",
         "//span[contains(text(), 'fichier')]",     # French  
         "//span[contains(text(), 'Datei')]",       # German  
         "//span[contains(text(), 'archivo')]",     # Spanish  
         "//span[contains(text(), 'ficheiro')]",    # Portuguese  
         "//span[contains(text(), 'bestand')]",     # Dutch
         "//span[contains(text(), 'αρχείο')]",      # Greek
+        "//div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'upload')]",
+        "//div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'file')]",
+        # Attribute-based selectors
+        "//div[@role='button' and contains(@aria-label, 'upload')]",
+        "//div[@role='button' and contains(@aria-label, 'file')]",
+        "//div[@role='button' and contains(@aria-label, 'import')]",
+        # Input file selectors
+        "input[type='file']",
+        "input[accept*='image']",
+        # Button patterns
+        "div[role='button'][data-*='upload']",
+        "div[role='button'][data-*='file']",
+        "button[type='button']:contains('upload')",
+        "button[type='button']:contains('file')",
     ]
     
     # Try each selector
@@ -320,10 +495,10 @@ def find_and_click_import_option(driver):
                 
             # For visible elements
             try:
-                wait = WebDriverWait(driver, 3)  # Shorter timeout for faster checking
+                wait = WebDriverWait(driver, 2)  # Shorter timeout for faster checking
                 import_element = wait.until(EC.element_to_be_clickable((by_method, selector)))
                 
-                logger.info(f"Found import button: '{import_element.text}', clicking...")
+                logger.info(f"Found import button: '{import_element.text[:50]}...', clicking...")
                 
                 # Move mouse to button before clicking (more human-like)
                 action = ActionChains(driver)
@@ -350,49 +525,127 @@ def find_and_click_import_option(driver):
         except Exception as e:
             logger.debug(f"Import selector {selector} failed: {e}")
     
-    # Special handling for last resort - try JavaScript click on any button with "import" or "file" text
+    # Enhanced JavaScript approach with multiple strategies
     try:
-        logger.info("Trying JavaScript approach to find import button...")
+        logger.info("Trying enhanced JavaScript approach to find import button...")
         buttons = driver.execute_script("""
-            function containsFileOrImport(text) {
-                if (!text) return false;
-                text = text.toLowerCase();
-                return text.includes('file') || 
-                       text.includes('fichier') || 
-                       text.includes('import') || 
-                       text.includes('upload');
+            function findImportElements() {
+                const keywords = ['file', 'upload', 'import', 'fichier', 'datei', 'archivo'];
+                const elements = [];
+                
+                // Strategy 1: Look for text content
+                document.querySelectorAll('span, div, button').forEach(el => {
+                    const text = (el.textContent || '').toLowerCase();
+                    if (keywords.some(keyword => text.includes(keyword))) {
+                        elements.push(el);
+                    }
+                });
+                
+                // Strategy 2: Look for aria-labels
+                document.querySelectorAll('[aria-label]').forEach(el => {
+                    const label = (el.getAttribute('aria-label') || '').toLowerCase();
+                    if (keywords.some(keyword => label.includes(keyword))) {
+                        elements.push(el);
+                    }
+                });
+                
+                // Strategy 3: Look for file inputs
+                document.querySelectorAll('input[type="file"]').forEach(el => {
+                    elements.push(el);
+                });
+                
+                // Strategy 4: Look for buttons with upload-related data attributes
+                document.querySelectorAll('[role="button"]').forEach(el => {
+                    const attrs = Array.from(el.attributes);
+                    if (attrs.some(attr => 
+                        attr.name.includes('upload') || 
+                        attr.name.includes('file') ||
+                        attr.value.includes('upload') ||
+                        attr.value.includes('file')
+                    )) {
+                        elements.push(el);
+                    }
+                });
+                
+                // Remove duplicates and return
+                return [...new Set(elements)];
             }
             
-            // Find all potential buttons
-            let potentialButtons = [];
-            document.querySelectorAll('[role="button"], button, span').forEach(el => {
-                if (containsFileOrImport(el.textContent)) {
-                    potentialButtons.push(el);
-                }
-            });
-            
-            return potentialButtons;
+            return findImportElements();
         """)
         
         if buttons and len(buttons) > 0:
-            logger.info(f"Found {len(buttons)} potential import buttons via JavaScript")
-            # Try clicking the first one
-            action = ActionChains(driver)
-            action.move_to_element(buttons[0]).pause(0.2).perform()
-            buttons[0].click()
-            time.sleep(1)
+            logger.info(f"Found {len(buttons)} potential import elements via JavaScript")
             
-            # Try to find file input after click
-            try:
-                file_input = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
-                return file_input
-            except:
-                return buttons[0]
+            # Try clicking each potential element
+            for i, button in enumerate(buttons[:3]):  # Try first 3 to avoid infinite loops
+                try:
+                    logger.info(f"Trying JavaScript-found element {i+1}")
+                    action = ActionChains(driver)
+                    action.move_to_element(button).pause(0.2).perform()
+                    button.click()
+                    time.sleep(1)
+                    
+                    # Try to find file input after click
+                    try:
+                        file_input = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
+                        logger.info(f"Success! Element {i+1} opened file dialog")
+                        return file_input
+                    except:
+                        logger.debug(f"Element {i+1} didn't open file dialog, trying next...")
+                        continue
+                        
+                except Exception as e:
+                    logger.debug(f"JavaScript element {i+1} failed: {e}")
+                    continue
     
     except Exception as e:
         logger.error(f"JavaScript approach failed: {e}")
     
-    logger.error("Could not find import option")
+    # Final fallback - look for any clickable element that might be related to file upload
+    try:
+        logger.info("Final fallback: looking for any potential upload elements...")
+        
+        # Look for common upload patterns
+        upload_patterns = [
+            "div[role='button']",
+            "button",
+            "span[role='button']",
+            "div[tabindex='0']"
+        ]
+        
+        for pattern in upload_patterns:
+            elements = driver.find_elements(By.CSS_SELECTOR, pattern)
+            for element in elements[:5]:  # Try first 5 of each pattern
+                try:
+                    # Check if element text or attributes suggest it's for file upload
+                    text = (element.text or '').lower()
+                    aria_label = (element.get_attribute('aria-label') or '').lower()
+                    
+                    if any(keyword in text + ' ' + aria_label for keyword in 
+                           ['file', 'upload', 'import', 'browse', 'choose', 'select']):
+                        logger.info(f"Trying potential upload element: '{text[:30]}...'")
+                        action = ActionChains(driver)
+                        action.move_to_element(element).pause(0.2).perform()
+                        element.click()
+                        time.sleep(1)
+                        
+                        # Check if file input appeared
+                        try:
+                            file_input = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
+                            logger.info("Success! File dialog opened")
+                            return file_input
+                        except:
+                            continue
+                            
+                except Exception as e:
+                    logger.debug(f"Upload element failed: {e}")
+                    continue
+    
+    except Exception as e:
+        logger.debug(f"Final upload fallback failed: {e}")
+    
+    logger.error("Could not find import option with any strategy")
     return None
 
 def upload_image(driver, file_element, image_path):

@@ -14,7 +14,8 @@ import AnalysisSelectionPage from './pages/AnalysisSelectionPage'
 import AnalyzeGeminiPage from './pages/analysis/AnalyzeGeminiPage'
 import AnalyzeSerpAPIPage from './pages/analysis/AnalyzeSerpAPIPage'
 import AnalyzeSearchAPIPage from './pages/analysis/AnalyzeSearchAPIPage'
-import AnalyzeOpenLensPage from './pages/analysis/AnalyzeOpenLensPage'
+// TODO: OpenLens temporarily disabled - working on improvements
+// import AnalyzeOpenLensPage from './pages/analysis/AnalyzeOpenLensPage'
 import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import WelcomePage from './pages/auth/WelcomePage'
@@ -52,7 +53,8 @@ const AppContent: React.FC = () => {
         <Route path="/analyze/gemini" element={<AnalyzeGeminiPage />} />
         <Route path="/analyze/serpapi" element={<AnalyzeSerpAPIPage />} />
         <Route path="/analyze/searchapi" element={<AnalyzeSearchAPIPage />} />
-        <Route path="/analyze/openlens" element={<AnalyzeOpenLensPage />} />
+        {/* TODO: OpenLens temporarily disabled - working on improvements */}
+        {/* <Route path="/analyze/openlens" element={<AnalyzeOpenLensPage />} /> */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>

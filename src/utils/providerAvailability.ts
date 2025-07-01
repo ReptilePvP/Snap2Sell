@@ -44,11 +44,12 @@ export async function getAvailableProviders(): Promise<ApiProvider[]> {
     ApiProvider.SEARCHAPI,
   ];
   
+  // TODO: OpenLens temporarily disabled - working on improvements
   // Check if OpenLens is available
-  const openLensAvailable = await isOpenLensAvailable();
-  if (openLensAvailable) {
-    allProviders.push(ApiProvider.OPENLENS);
-  }
+  // const openLensAvailable = await isOpenLensAvailable();
+  // if (openLensAvailable) {
+  //   allProviders.push(ApiProvider.OPENLENS);
+  // }
   
   return allProviders;
 }
