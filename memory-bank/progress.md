@@ -1,4 +1,4 @@
-# Project Progress: Snap2Cash
+# Project Progress: Snapalyze
 
 ## Current Status (As of Initialization of Backend Task)
 
@@ -54,7 +54,7 @@
 
 *   **`service-account.json`:** Ensuring this file is correctly placed for local development and handled securely for deployment (not committed).
 *   **CORS Configuration:** Needs to be correctly set up on the backend to allow requests from the frontend's origin.
-*   **GCS Bucket Permissions:** The service account used must have appropriate permissions (`Storage Object Creator`, `Storage Object Viewer`) on the `snap2cash-uploads` bucket. The bucket must exist or be created.
+*   **GCS Bucket Permissions:** The service account used must have appropriate permissions (`Storage Object Creator`, `Storage Object Viewer`) on the `snapalyze-uploads` bucket. The bucket must exist or be created.
 *   **TypeScript Configuration:** Ensuring both frontend and new backend TypeScript configurations are correct and do not conflict if managed under a monorepo-like structure (though currently they are separate).
 
 ## Evolution of Project Decisions

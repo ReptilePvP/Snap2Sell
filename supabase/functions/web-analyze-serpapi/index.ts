@@ -78,7 +78,7 @@ serve(async (req) => {
     const apiResponse = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'User-Agent': 'Snap2Sell-Web/1.0'
+        'User-Agent': 'Snapalyze-Web/1.0'
       }
     });
     

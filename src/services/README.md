@@ -1,6 +1,6 @@
-# Snap2Sell Web Analysis Services
+# Snapalyze Web Analysis Services
 
-This directory contains all the analysis services for the Snap2Sell web application. These services provide a clean interface for interacting with various AI analysis providers while maintaining separation from the mobile app implementation.
+This directory contains all the analysis services for the Snapalyze web application. These services provide a clean interface for interacting with various AI analysis providers while maintaining separation from the mobile app implementation.
 
 ## Architecture
 

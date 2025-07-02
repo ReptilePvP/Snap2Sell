@@ -46,7 +46,7 @@ const AuthLoading: React.FC<AuthLoadingProps> = ({ onTroubleshooting }) => {
         <div className="mb-6">
           <LoadingSpinner size="lg" className="mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            Loading Snap2Sell
+            Loading Snapalyze
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
             {message}

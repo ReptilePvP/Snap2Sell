@@ -1,6 +1,6 @@
-# Netlify Deployment Guide for Snap2Sell
+# Netlify Deployment Guide for Snapalyze
 
-This guide will help you deploy Snap2Sell to Netlify.
+This guide will help you deploy Snapalyze to Netlify.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This guide will help you deploy Snap2Sell to Netlify.
 
 1. Log in to [Netlify](https://app.netlify.com)
 2. Click "Add new site" → "Import an existing project"
-3. Connect to GitHub and select your Snap2Sell repository
+3. Connect to GitHub and select your Snapalyze repository
 4. Configure build settings:
    - **Build command**: `npm run build`
    - **Publish directory**: `dist`

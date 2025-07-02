@@ -64,7 +64,7 @@ const ProfileScreen: React.FC = () => {
     {
       icon: 'information-circle-outline',
       title: 'About',
-      onPress: () => showToast('info', 'Snap2Cash v1.0.0'),
+      onPress: () => showToast('info', 'Snapalyze v1.0.0'),
     },
   ];
 
@@ -169,7 +169,7 @@ const ProfileScreen: React.FC = () => {
 
       <View style={styles.footer}>
         <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-          Snap2Cash v1.0.0
+          Snapalyze v1.0.0
         </Text>
       </View>
     </ScrollView>

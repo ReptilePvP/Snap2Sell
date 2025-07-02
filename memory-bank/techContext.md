@@ -1,4 +1,4 @@
-# Technical Context: Snap2Cash
+# Technical Context: Snapalyze
 
 ## Core Technologies
 
@@ -28,7 +28,7 @@
 
 ## Cloud Services
 *   **Storage:** Google Cloud Storage (GCS)
-    *   **Bucket Name:** `snap2cash-uploads` (configurable via `GCS_BUCKET_NAME` environment variable)
+    *   **Bucket Name:** `snapalyze-uploads` (configurable via `GCS_BUCKET_NAME` environment variable)
     *   **Authentication:** `service-account.json` key file (expected in project root for local development, managed via environment variables/secrets in deployment).
 *   **Deployment (Planned):** Google Cloud Run
 

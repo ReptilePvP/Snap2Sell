@@ -60,17 +60,17 @@ If you prefer manual steps:
 
 ```bash
 # Build the image
-docker build -t gcr.io/your-project-id/snap2sell-openlens .
+docker build -t gcr.io/your-project-id/snapalyze-openlens .
 
 # Push to Google Container Registry
-docker push gcr.io/your-project-id/snap2sell-openlens
+docker push gcr.io/your-project-id/snapalyze-openlens
 ```
 
 ### 2. Deploy to Cloud Run
 
 ```bash
-gcloud run deploy snap2sell-openlens \
-  --image gcr.io/your-project-id/snap2sell-openlens \
+gcloud run deploy snapalyze-openlens \
+  --image gcr.io/your-project-id/snapalyze-openlens \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
@@ -99,7 +99,7 @@ The service uses these environment variables:
 
 After deployment, you'll get a URL like:
 ```
-https://snap2sell-openlens-xxxxx-uc.a.run.app
+https://snapalyze-openlens-xxxxx-uc.a.run.app
 ```
 
 Add this to your Netlify environment variables:
@@ -111,12 +111,12 @@ VITE_OPENLENS_API_URL=https://your-cloud-run-url
 
 ### View Logs
 ```bash
-gcloud run services logs read snap2sell-openlens --region=us-central1
+gcloud run services logs read snapalyze-openlens --region=us-central1
 ```
 
 ### Monitor Performance
 - Go to [Google Cloud Console](https://console.cloud.google.com)
-- Navigate to Cloud Run > snap2sell-openlens
+- Navigate to Cloud Run > snapalyze-openlens
 - Check metrics and logs
 
 ## Cost Optimization
@@ -141,13 +141,13 @@ The service scales to zero when not in use, so you only pay for actual usage.
 ### Memory Issues
 - Increase memory allocation if needed:
   ```bash
-  gcloud run services update snap2sell-openlens --memory 4Gi --region us-central1
+  gcloud run services update snapalyze-openlens --memory 4Gi --region us-central1
   ```
 
 ### Timeout Issues
 - Increase timeout if analysis takes longer:
   ```bash
-  gcloud run services update snap2sell-openlens --timeout 600s --region us-central1
+  gcloud run services update snapalyze-openlens --timeout 600s --region us-central1
   ```
 
 ## Security

@@ -56,8 +56,8 @@ const ProfilePage: React.FC = () => {
     {
       icon: InformationCircleIcon,
       title: 'About',
-      description: 'Learn more about Snap2Sell',
-      onClick: () => showToast('info', 'Snap2Sell v1.0.0', 'AI-powered item analysis platform'),
+      description: 'Learn more about Snapalyze',
+      onClick: () => showToast('info', 'Snapalyze v1.0.0', 'AI-powered item analysis platform'),
     },
   ];
 
@@ -153,7 +153,7 @@ const ProfilePage: React.FC = () => {
 
       {/* Footer */}
       <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-        Snap2Sell v1.0.0
+        Snapalyze v1.0.0
       </div>
     </div>
   );

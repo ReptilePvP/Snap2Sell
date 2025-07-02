@@ -1,8 +1,8 @@
-# Snap2Sell - Feature Documentation
+# Snapalyze - Feature Documentation
 
 ## Project Overview
 
-**Snap2Sell** (formerly Snap2Cash) is a comprehensive AI-powered image analysis platform that helps users discover item value and insights through multiple analysis providers.
+**Snapalyze** (formerly Snap2Cash) is a comprehensive AI-powered image analysis platform that helps users discover item value and insights through multiple analysis providers.
 
 ## Latest Updates (v1.0.0)
 
@@ -84,7 +84,7 @@
 ## Project Structure
 
 ```
-Snap2Sell/
+Snapalyze/
 ├── src/                          # Web application source
 │   ├── components/               # React components
 │   ├── pages/                    # Page components
@@ -137,8 +137,8 @@ Snap2Sell/
 ### Quick Start
 ```bash
 # Clone repository
-git clone https://github.com/ReptilePvP/Snap2Sell.git
-cd Snap2Sell
+git clone https://github.com/ReptilePvP/Snapalyze.git
+cd Snapalyze
 
 # Install dependencies
 npm install
@@ -227,7 +227,7 @@ interface AnalysisResult {
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/ReptilePvP/Snap2Sell/issues)
+- **Issues**: [GitHub Issues](https://github.com/ReptilePvP/Snapalyze/issues)
 - **Documentation**: This README and inline code comments
 - **API Docs**: Available at `http://127.0.0.1:8000/docs` when running OpenLens
 
@@ -237,4 +237,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Snap2Sell** - Transform your visual world into valuable insights! 📸✨
+**Snapalyze** - Transform your visual world into valuable insights! 📸✨

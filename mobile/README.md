@@ -1,4 +1,4 @@
-# Snap2Cash Mobile
+# Snapalyze Mobile
 
 A React Native mobile application for analyzing and estimating the resale value of items using AI-powered image analysis.
 
@@ -6,7 +6,7 @@ A React Native mobile application for analyzing and estimating the resale value 
 
 - **Camera Integration**: Take photos or select from gallery
 - **AI Analysis**: Powered by Gemini AI for accurate item valuation
-- **Backend Integration**: Seamlessly connects to your existing Snap2Cash backend
+- **Backend Integration**: Seamlessly connects to your existing Snapalyze backend
 - **History Tracking**: Keep track of all your analyzed items
 - **Favorites**: Save important analyses for quick access
 - **Dark/Light Theme**: Automatic theme switching support
@@ -20,7 +20,7 @@ A React Native mobile application for analyzing and estimating the resale value 
 - Expo CLI (`npm install -g expo-cli`)
 - iOS Simulator (for iOS development)
 - Android Studio/Emulator (for Android development)
-- Your Snap2Cash backend running (see backend setup in main README)
+- Your Snapalyze backend running (see backend setup in main README)
 
 ### Installation
 
@@ -64,7 +64,7 @@ A React Native mobile application for analyzing and estimating the resale value 
 
 ## Backend Integration
 
-The mobile app is designed to work with your existing Snap2Cash backend:
+The mobile app is designed to work with your existing Snapalyze backend:
 
 ### Required Backend Endpoints
 
@@ -206,4 +206,4 @@ EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
 
 ## License
 
-This project is part of the Snap2Cash application suite.
+This project is part of the Snapalyze application suite.

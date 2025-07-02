@@ -4,7 +4,7 @@
 # VITE_GEMINI_API_KEY - Google Gemini API key
 # VITE_SEARCH_API_KEY - Google Search API key
 # VITE_SERP_API_KEY - SERP API key
-# VITE_OPENLENS_API_URL - OpenLens Cloud Run service URL (https://snap2sell-openlens-156064765830.us-central1.run.app)
+# VITE_OPENLENS_API_URL - OpenLens Cloud Run service URL (https://snapalyze-openlens-156064765830.us-central1.run.app)
 
 [build]
   command = "npm run build"

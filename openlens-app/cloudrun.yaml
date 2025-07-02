@@ -2,7 +2,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: snap2sell-openlens
+  name: snapalyze-openlens
   annotations:
     run.googleapis.com/ingress: all
 spec:
@@ -16,7 +16,7 @@ spec:
     spec:
       containerConcurrency: 10
       containers:
-      - image: gcr.io/PROJECT_ID/snap2sell-openlens:latest
+      - image: gcr.io/PROJECT_ID/snapalyze-openlens:latest
         ports:
         - containerPort: 8080
         env:

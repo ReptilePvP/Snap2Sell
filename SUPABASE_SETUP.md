@@ -1,6 +1,6 @@
-# Supabase Setup Guide for Snap2Sell
+# Supabase Setup Guide for Snapalyze
 
-This guide will walk you through setting up Supabase for the Snap2Sell application.
+This guide will walk you through setting up Supabase for the Snapalyze application.
 
 ## ✅ Your Supabase Project is Already Configured!
 

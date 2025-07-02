@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: "Snap2Cash",
-    slug: "snap2cash-mobile",
+    name: "Snapalyze",
+    slug: "snapalyze-mobile",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -18,7 +18,7 @@ export default {
     ],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.ndresells.snap2cash",
+      bundleIdentifier: "com.ndresells.snapalyze",
       infoPlist: {
         NSCameraUsageDescription: "This app needs access to camera to scan items for analysis.",
         NSPhotoLibraryUsageDescription: "This app needs access to photo library to select images for analysis."
@@ -29,7 +29,7 @@ export default {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#3b82f6"
       },
-      package: "com.ndresells.snap2cash",
+      package: "com.ndresells.snapalyze",
       permissions: [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",

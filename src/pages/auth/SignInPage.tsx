@@ -39,7 +39,7 @@ const SignInPage: React.FC = () => {
             Welcome Back
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to continue to Snap2Sell
+            Sign in to continue to Snapalyze
           </p>
         </div>
       </div>

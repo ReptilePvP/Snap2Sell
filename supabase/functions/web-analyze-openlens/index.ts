@@ -41,7 +41,7 @@ serve(async (req) => {
     }
 
     // Call your Railway OpenLens service with the new URL endpoint
-    const OPENLENS_API_URL = 'https://snap2sell-production.up.railway.app'
+    const OPENLENS_API_URL = 'https://snapalyze-production.up.railway.app'
     console.log('Calling OpenLens Railway API with image URL')
     
     const openLensResponse = await fetch(`${OPENLENS_API_URL}/analyze-url`, {

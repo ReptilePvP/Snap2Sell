@@ -28,7 +28,7 @@ const WelcomePage: React.FC = () => {
         <div className="text-center">
           <CameraIcon className="mx-auto h-16 w-16 text-white mb-6" />
           <h1 className="text-4xl font-bold text-white mb-4">
-            Snap2Sell
+            Snapalyze
           </h1>
           <p className="text-xl text-blue-100 mb-8">
             Discover the value of your items instantly with AI-powered analysis

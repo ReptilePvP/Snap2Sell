@@ -1,4 +1,4 @@
-# Snap2Sell
+# Snapalyze
 > A comprehensive AI-powered image analysis platform for discovering item value and insights.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com)
@@ -8,9 +8,9 @@
 
 ## Project Overview
 
-Snap2Sell is a cutting-edge web application designed to bridge the gap between the physical and digital worlds through advanced AI-powered image analysis. In today's visual-centric world, Snap2Sell provides a seamless solution to capture, analyze, and extract valuable insights from images.
+Snapalyze is a cutting-edge web application designed to bridge the gap between the physical and digital worlds through advanced AI-powered image analysis. In today's visual-centric world, Snapalyze provides a seamless solution to capture, analyze, and extract valuable insights from images.
 
-The core problem this project solves is the inefficiency and manual effort required to understand and value visual information. Whether you're a reseller assessing item value, a collector researching artifacts, or simply curious about objects around you, Snap2Sell streamlines this process into intuitive interactions. Our mission is to transform visual information into actionable, structured data that saves time and provides valuable insights.
+The core problem this project solves is the inefficiency and manual effort required to understand and value visual information. Whether you're a reseller assessing item value, a collector researching artifacts, or simply curious about objects around you, Snapalyze streamlines this process into intuitive interactions. Our mission is to transform visual information into actionable, structured data that saves time and provides valuable insights.
 
 ## Key Features
 
@@ -32,7 +32,7 @@ The core problem this project solves is the inefficiency and manual effort requi
 
 [Link to Live Demo]()
 
-![Screenshot of Snap2Sell](https://via.placeholder.com/800x450.png?text=Snap2Sell+Screenshot)
+![Screenshot of Snapalyze](https://via.placeholder.com/800x450.png?text=Snapalyze+Screenshot)
 
 ## Technology Stack
 
@@ -62,7 +62,7 @@ Our application is built with a modern and robust technology stack to ensure a h
 
 ## Installation & Setup
 
-Follow these steps to get a local copy of Snap2Sell up and running.
+Follow these steps to get a local copy of Snapalyze up and running.
 
 ### Prerequisites
 
@@ -80,8 +80,8 @@ Follow these steps to get a local copy of Snap2Sell up and running.
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/ReptilePvP/Snap2Sell.git
-    cd Snap2Sell
+    git clone https://github.com/ReptilePvP/Snapalyze.git
+    cd Snapalyze
     ```
 
 2.  **Install root dependencies:**
@@ -273,4 +273,4 @@ For detailed guidelines on how to contribute, please see our [CONTRIBUTING.md](C
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.# Snap2Sell
+Distributed under the MIT License. See `LICENSE` for more information.

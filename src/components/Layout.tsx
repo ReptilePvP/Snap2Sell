@@ -86,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Link to="/" className="flex items-center space-x-2">
               <CameraIcon className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Snap2Sell
+                Snapalyze
               </span>
             </Link>
           </div>
@@ -147,7 +147,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Link to="/" className="flex items-center space-x-2">
             <CameraIcon className="h-6 w-6 text-blue-600" />
             <span className="text-lg font-bold text-gray-900 dark:text-white">
-              Snap2Sell
+              Snapalyze
             </span>
           </Link>
           <div className="flex items-center space-x-2">
@@ -172,7 +172,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
                 <CameraIcon className="h-6 w-6 text-blue-600" />
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  Snap2Sell
+                  Snapalyze
                 </span>
               </Link>
               <button

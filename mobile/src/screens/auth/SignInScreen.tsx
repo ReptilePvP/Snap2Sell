@@ -52,7 +52,7 @@ const SignInScreen: React.FC = () => {
           </View>
           <Text style={[styles.title, { color: colors.text }]}>Welcome Back</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Sign in to continue to Snap2Cash
+            Sign in to continue to Snapalyze
           </Text>
         </View>
 

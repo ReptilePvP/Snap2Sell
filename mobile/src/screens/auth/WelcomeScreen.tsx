@@ -27,7 +27,7 @@ const WelcomeScreen: React.FC = () => {
           <Ionicons name="camera" size={80} color="white" />
         </View>
         
-        <Text style={styles.title}>Snap2Cash</Text>
+        <Text style={styles.title}>Snapalyze</Text>
         <Text style={styles.subtitle}>
           Discover the value of your items instantly with AI-powered analysis
         </Text>

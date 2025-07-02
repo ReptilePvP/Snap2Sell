@@ -65,7 +65,7 @@ const SignUpScreen: React.FC = () => {
           </View>
           <Text style={[styles.title, { color: colors.text }]}>Create Account</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Join Snap2Cash and start discovering value
+            Join Snapalyze and start discovering value
           </Text>
         </View>
 

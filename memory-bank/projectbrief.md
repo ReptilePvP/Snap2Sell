@@ -1,8 +1,8 @@
-# Project Brief: Snap2Cash
+# Project Brief: Snapalyze
 
 ## Core Goal
 
-Snap2Cash is a web application designed to allow users to upload images, which are then processed and analyzed. The primary interaction involves users submitting images, potentially for financial-related analysis, value extraction, or item identification, and receiving structured data or insights in return.
+Snapalyze is a web application designed to allow users to upload images, which are then processed and analyzed. The primary interaction involves users submitting images, potentially for financial-related analysis, value extraction, or item identification, and receiving structured data or insights in return.
 
 ## Key Features (Inferred and Planned)
 

@@ -1,4 +1,4 @@
-# System Patterns: Snap2Cash
+# System Patterns: Snapalyze
 
 ## Overall Architecture
 *   **Client-Server Model:** The application follows a classic client-server architecture.
@@ -42,7 +42,7 @@ sequenceDiagram
     *   `multer` middleware extracts the file.
     *   A unique filename is generated (e.g., using `uuid` + original extension).
     *   The `gcsUploader` utility uploads the file stream/buffer to the specified GCS bucket.
-4.  **Storage:** The image is stored in the GCS bucket (`snap2cash-uploads`).
+4.  **Storage:** The image is stored in the GCS bucket (`snapalyze-uploads`).
 5.  **Output:** A public URL pointing to the uploaded image in GCS is returned to the frontend.
 
 ## Critical Implementation Paths

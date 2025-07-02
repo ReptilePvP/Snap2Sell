@@ -97,7 +97,7 @@ const HomeScreen: React.FC = () => {
               tablet: 42,
             }}
           >
-            Snap2Cash
+            Snapalyze
           </AdaptiveText>
           <AdaptiveText 
             variant="body" 
