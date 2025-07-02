@@ -13,7 +13,7 @@ import { useStats } from '../hooks/useStats';
 import { StatsSkeleton, ListSkeleton } from '../components/Skeleton';
 
 import { useRecentActivity } from '../hooks/useRecentActivity';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
