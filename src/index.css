@@ -1,3 +1,6 @@
+/* Mobile Enhancement Styles */
+@import './styles/mobile-enhancements.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

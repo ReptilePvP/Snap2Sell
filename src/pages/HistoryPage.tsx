@@ -8,6 +8,9 @@ import { useToast } from '../hooks/useToast';
 import { useAuth } from '../hooks/useAuth';
 import ResultCard from '../components/ResultCard';
 import { ListSkeleton } from '../components/Skeleton';
+import PullToRefresh from '../components/PullToRefresh';
+import MobileCard from '../components/MobileCard';
+import MobileButton from '../components/MobileButton';
 
 const HistoryPage: React.FC = () => {
   const [history, setHistory] = useState<ScanHistoryItem[]>([]);
@@ -103,12 +106,13 @@ const HistoryPage: React.FC = () => {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center space-x-4">
-          <button
+          <MobileButton
             onClick={() => setSelectedItem(null)}
-            className="btn btn-secondary"
+            variant="secondary"
+            size="sm"
           >
             ← Back to History
-          </button>
+          </MobileButton>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Analysis Details
           </h1>
@@ -133,83 +137,92 @@ const HistoryPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center space-x-3">
-        <ClockIcon className="h-8 w-8 text-blue-600" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Scan History
-        </h1>
-      </div>
-
-      {history.length === 0 ? (
-        <div className="text-center py-12">
-          <ClockIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            No scans in your history yet
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Start analyzing items to see them here!
-          </p>
+    <PullToRefresh onRefresh={loadHistory}>
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex items-center space-x-3">
+          <ClockIcon className="h-8 w-8 text-blue-600" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Scan History
+          </h1>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {history.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              {item.imageUrl && (
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
-                  {item.value}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                  {new Date(item.timestamp).toLocaleDateString()} • {item.apiProvider}
-                </p>
-                
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={() => setSelectedItem(item)}
-                    className="btn btn-primary text-xs px-3 py-1 flex items-center space-x-1"
-                  >
-                    <EyeIcon className="h-3 w-3" />
-                    <span>View</span>
-                  </button>
+
+        {history.length === 0 ? (
+          <div className="text-center py-12">
+            <ClockIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              No scans in your history yet
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Start analyzing items to see them here!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {history.map((item) => (
+              <MobileCard
+                key={item.id}
+                variant="elevated"
+                className="overflow-hidden"
+              >
+                {item.imageUrl && (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
+                    {item.value}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    {new Date(item.timestamp).toLocaleDateString()} • {item.apiProvider}
+                  </p>
                   
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => toggleFavorite(item.id)}
-                      className="p-1 text-gray-400 hover:text-yellow-500 transition-colors"
+                  <div className="flex items-center justify-between">
+                    <MobileButton
+                      onClick={() => setSelectedItem(item)}
+                      variant="primary"
+                      size="sm"
+                      className="flex items-center space-x-1"
                     >
-                      {item.isFavorite ? (
-                        <StarIconSolid className="h-4 w-4 text-yellow-500" />
-                      ) : (
-                        <StarIcon className="h-4 w-4" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => deleteItem(item.id)}
-                      className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </button>
+                      <EyeIcon className="h-3 w-3" />
+                      <span>View</span>
+                    </MobileButton>
+                    
+                    <div className="flex items-center space-x-2">
+                      <MobileButton
+                        onClick={() => toggleFavorite(item.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="p-1 text-gray-400 hover:text-yellow-500"
+                      >
+                        {item.isFavorite ? (
+                          <StarIconSolid className="h-4 w-4 text-yellow-500" />
+                        ) : (
+                          <StarIcon className="h-4 w-4" />
+                        )}
+                      </MobileButton>
+                      <MobileButton
+                        onClick={() => deleteItem(item.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="p-1 text-gray-400 hover:text-red-500"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </MobileButton>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+              </MobileCard>
+            ))}
+          </div>
+        )}
+      </div>
+    </PullToRefresh>
   );
 };
 
