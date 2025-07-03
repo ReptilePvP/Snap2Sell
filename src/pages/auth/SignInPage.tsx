@@ -40,30 +40,42 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-repeat" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+      </div>
+
+      <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <div className="mx-auto flex items-center justify-center mb-6">
-            <Logo size="lg" showText={false} />
+            <div className="relative">
+              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 flex items-center justify-center">
+                <Logo size="lg" showText={false} variant="white" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl blur-xl opacity-30 animate-pulse"></div>
+            </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-3xl font-bold text-white mb-4">
             Welcome Back
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to continue to Snapalyze
+          <p className="text-lg text-slate-300">
+            Sign in to continue to <span className="text-blue-400 font-semibold">Snapalyze</span>
           </p>
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="relative z-10 mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl py-8 px-4 shadow-2xl sm:px-10">
           {/* Google Sign In Button */}
           <div className="mb-6">
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex justify-center items-center px-4 py-3 border border-white/20 rounded-xl shadow-sm text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 backdrop-blur-lg"
             >
               {isLoading ? (
                 <LoadingSpinner size="sm" className="mr-2" />
@@ -94,10 +106,10 @@ const SignInPage: React.FC = () => {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+              <div className="w-full border-t border-white/20" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+              <span className="px-2 bg-transparent text-slate-400">
                 Or continue with email
               </span>
             </div>
@@ -105,7 +117,7 @@ const SignInPage: React.FC = () => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
                 Email address
               </label>
               <div className="mt-1">
@@ -117,14 +129,14 @@ const SignInPage: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-lg transition-all duration-300"
                   placeholder="Enter your email"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
                 Password
               </label>
               <div className="mt-1 relative">
@@ -136,18 +148,18 @@ const SignInPage: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input pr-10"
+                  className="w-full px-4 py-3 pr-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-lg transition-all duration-300"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                    <EyeSlashIcon className="h-5 w-5" />
                   ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-400" />
+                    <EyeIcon className="h-5 w-5" />
                   )}
                 </button>
               </div>
@@ -158,7 +170,7 @@ const SignInPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(true)}
-                  className="font-medium text-blue-600 hover:text-blue-500 touch-feedback rounded px-2 py-1"
+                  className="font-medium text-blue-400 hover:text-blue-300 touch-feedback rounded px-2 py-1 transition-colors"
                 >
                   Forgot your password?
                 </button>
@@ -169,15 +181,18 @@ const SignInPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="btn btn-primary w-full flex justify-center py-3 px-4 text-lg disabled:opacity-50"
+                className="group relative w-full flex justify-center py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 {isLoading ? (
                   <>
                     <LoadingSpinner size="sm" className="mr-2" />
-                    Signing in...
+                    <span>Signing in...</span>
                   </>
                 ) : (
-                  'Sign in'
+                  <span className="flex items-center">
+                    Sign in
+                    <ArrowRightIcon className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 )}
               </button>
             </div>
@@ -185,9 +200,9 @@ const SignInPage: React.FC = () => {
 
           <div className="mt-6">
             <div className="text-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-slate-400">
                 Don't have an account?{' '}
-                <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link to="/signup" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
                   Sign up
                 </Link>
               </span>

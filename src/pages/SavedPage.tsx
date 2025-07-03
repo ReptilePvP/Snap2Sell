@@ -79,109 +79,137 @@ const SavedPage: React.FC = () => {
 
   if (selectedItem) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center space-x-4">
-          <MobileButton
-            onClick={() => setSelectedItem(null)}
-            variant="secondary"
-            size="sm"
-          >
-            ← Back to Saved
-          </MobileButton>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Saved Item Details
-          </h1>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(120,119,198,0.2),transparent_50%)]" />
         </div>
-        <ResultCard result={selectedItem} />
+
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center space-x-4">
+            <MobileButton
+              onClick={() => setSelectedItem(null)}
+              variant="secondary"
+              size="sm"
+              className="bg-white/10 backdrop-blur-lg border-white/20 text-white hover:bg-white/20"
+            >
+              ← Back to Saved
+            </MobileButton>
+            <h1 className="text-2xl font-bold text-white">
+              Saved Item Details
+            </h1>
+          </div>
+          <ResultCard result={selectedItem} />
+        </div>
       </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center space-x-3 mb-6">
-          <StarIcon className="h-8 w-8 text-yellow-500" />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Saved Items
-          </h1>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(120,119,198,0.2),transparent_50%)]" />
         </div>
-        <ListSkeleton items={6} />
+
+        <div className="relative z-10 max-w-6xl mx-auto space-y-6">
+          <div className="flex items-center space-x-3 mb-6">
+            <StarIcon className="h-8 w-8 text-yellow-400" />
+            <h1 className="text-3xl font-bold text-white">
+              Saved Items
+            </h1>
+          </div>
+          <ListSkeleton items={6} />
+        </div>
       </div>
     );
   }
 
   return (
-    <PullToRefresh onRefresh={loadSavedItems}>
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center space-x-3">
-          <StarIcon className="h-8 w-8 text-yellow-500" />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Saved Items
-          </h1>
-        </div>
-
-        {savedItems.length === 0 ? (
-          <div className="text-center py-12">
-            <StarIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              No saved items yet
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Mark items as favorite in your history to see them here
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {savedItems.map((item) => (
-              <MobileCard
-                key={item.id}
-                variant="elevated"
-                className="overflow-hidden relative"
-              >
-                <MobileButton
-                  onClick={() => removeFromSaved(item.id)}
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-2 right-2 z-10 p-1 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <XMarkIcon className="h-4 w-4 text-gray-500" />
-                </MobileButton>
-                
-                {item.imageUrl && (
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
-                    {item.value}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    {new Date(item.timestamp).toLocaleDateString()}
-                  </p>
-                  
-                  <MobileButton
-                    onClick={() => setSelectedItem(item)}
-                    variant="primary"
-                    size="sm"
-                    className="w-full flex items-center space-x-1 justify-center"
-                  >
-                    <EyeIcon className="h-3 w-3" />
-                    <span>View Details</span>
-                  </MobileButton>
-                </div>
-              </MobileCard>
-            ))}
-          </div>
-        )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(120,119,198,0.2),transparent_50%)]" />
       </div>
-    </PullToRefresh>
+
+      <PullToRefresh onRefresh={loadSavedItems}>
+        <div className="relative z-10 max-w-6xl mx-auto space-y-6">
+          <div className="flex items-center space-x-3">
+            <StarIcon className="h-8 w-8 text-yellow-400" />
+            <h1 className="text-3xl font-bold text-white">
+              Saved Items
+            </h1>
+          </div>
+
+          {savedItems.length === 0 ? (
+            <div className="text-center py-12">
+              <StarIcon className="mx-auto h-16 w-16 text-white/40 mb-4" />
+              <h2 className="text-xl font-semibold text-white mb-2">
+                No saved items yet
+              </h2>
+              <p className="text-white/60">
+                Mark items as favorite in your history to see them here
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedItems.map((item) => (
+                <MobileCard
+                  key={item.id}
+                  variant="elevated"
+                  className="overflow-hidden relative bg-white/10 backdrop-blur-lg border-white/20"
+                >
+                  <MobileButton
+                    onClick={() => removeFromSaved(item.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2 z-10 p-1 bg-white/20 backdrop-blur-lg rounded-full shadow-md hover:bg-white/30 text-white/80 hover:text-white"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </MobileButton>
+                  
+                  {item.imageUrl && (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-white mb-2 line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm font-medium text-green-300 mb-2">
+                      {item.value}
+                    </p>
+                    <p className="text-xs text-white/60 mb-4">
+                      {new Date(item.timestamp).toLocaleDateString()}
+                    </p>
+                    
+                    <MobileButton
+                      onClick={() => setSelectedItem(item)}
+                      variant="primary"
+                      size="sm"
+                      className="w-full flex items-center space-x-1 justify-center bg-blue-600 hover:bg-blue-700"
+                    >
+                      <EyeIcon className="h-3 w-3" />
+                      <span>View Details</span>
+                    </MobileButton>
+                  </div>
+                </MobileCard>
+              ))}
+            </div>
+          )}
+        </div>
+      </PullToRefresh>
+    </div>
   );
 };
 

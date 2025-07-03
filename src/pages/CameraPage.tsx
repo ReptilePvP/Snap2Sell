@@ -411,16 +411,24 @@ const CameraPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="text-center">
-        <CameraIcon className="mx-auto h-12 w-12 text-blue-600 mb-4" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Item Analysis
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Take a photo or upload an image to get instant AI-powered value estimation
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(120,119,198,0.2),transparent_50%)]" />
       </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto space-y-8">
+        <div className="text-center">
+          <CameraIcon className="mx-auto h-12 w-12 text-blue-300 mb-4" />
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Item Analysis
+          </h1>
+          <p className="text-lg text-white/70">
+            Take a photo or upload an image to get instant AI-powered value estimation
+          </p>
+        </div>
 
       {/* Camera Section */}
       {isCameraActive ? (
@@ -670,6 +678,7 @@ const CameraPage: React.FC = () => {
           isProcessing={pendingAnalysis}
         />
       )}
+      </div>
     </div>
   );
 };

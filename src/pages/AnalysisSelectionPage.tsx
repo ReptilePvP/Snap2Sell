@@ -80,16 +80,24 @@ const AnalysisSelectionPage: React.FC = () => {
   const showOpenLensWarning = openLensNotAvailable && !isDevelopment() && !isOpenLensConfigured();
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div className="text-center">
-        <ChartBarIcon className="mx-auto h-12 w-12 text-blue-600 mb-4" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Choose Analysis Type
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Select an AI provider to analyze your images and get detailed insights
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(120,119,198,0.2),transparent_50%)]" />
       </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto space-y-8">
+        <div className="text-center">
+          <ChartBarIcon className="mx-auto h-12 w-12 text-blue-300 mb-4" />
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Choose Analysis Type
+          </h1>
+          <p className="text-lg text-white/70">
+            Select an AI provider to analyze your images and get detailed insights
+          </p>
+        </div>
 
       {/* Loading state */}
       {isLoading && (
@@ -165,10 +173,11 @@ const AnalysisSelectionPage: React.FC = () => {
         <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-2">
           💡 Pro Tip
         </h3>
-        <p className="text-blue-800 dark:text-blue-200">
+        <p className="text-blue-200">
           For the most comprehensive analysis, try different providers with the same image. 
           Each AI service has unique strengths and may provide different insights about your item.
         </p>
+      </div>
       </div>
     </div>
   );

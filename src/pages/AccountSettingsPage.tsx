@@ -128,29 +128,37 @@ const AccountSettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center space-x-4 mb-8">
-        <button
-          onClick={() => navigate('/profile')}
-          className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage your account preferences and security</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(120,119,198,0.2),transparent_50%)]" />
       </div>
 
-      {/* Profile Information */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            <UserIcon className="h-6 w-6 text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h2>
+      <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center space-x-4 mb-8">
+          <button
+            onClick={() => navigate('/profile')}
+            className="p-2 rounded-lg bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20 transition-colors text-white"
+          >
+            <ArrowLeftIcon className="h-5 w-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Account Settings</h1>
+            <p className="text-white/70">Manage your account preferences and security</p>
           </div>
         </div>
+
+        {/* Profile Information */}
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg overflow-hidden">
+          <div className="p-6 border-b border-white/10">
+            <div className="flex items-center space-x-3">
+              <UserIcon className="h-6 w-6 text-white/60" />
+              <h2 className="text-lg font-semibold text-white">Profile Information</h2>
+            </div>
+          </div>
         
         <form onSubmit={handleProfileUpdate} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -475,6 +483,7 @@ const AccountSettingsPage: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
