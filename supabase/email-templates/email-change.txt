@@ -1,0 +1,32 @@
+📧 SNAPALYZE - Confirm Email Change
+
+Hi there! ✉️
+
+You've requested to change your email address for your Snapalyze account.
+
+NEW EMAIL ADDRESS:
+{{ .Email }}
+
+CONFIRM YOUR NEW EMAIL:
+{{ .ConfirmationURL }}
+
+Click the link above or copy it into your browser to confirm the change.
+
+WHAT HAPPENS NEXT:
+1. Click the confirmation link
+2. Your email address will be updated immediately  
+3. Use your new email for future logins
+
+⚠️ IMPORTANT:
+- This link expires in 24 hours for security
+- If you didn't request this change, contact support immediately
+- Your old email will no longer work for login after confirmation
+
+Need help? Contact our support team:
+https://www.snapalyze.org/support
+
+---
+Snapalyze Team
+https://www.snapalyze.org
+
+© 2025 Snapalyze. Keeping your account secure.

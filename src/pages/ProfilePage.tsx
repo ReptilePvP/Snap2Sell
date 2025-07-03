@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Cog6ToothIcon, 
   BellIcon, 
@@ -16,6 +17,7 @@ const ProfilePage: React.FC = () => {
   const { user, signOut } = useAuth();
   const { showToast } = useToast();
   const { stats, isLoading: statsLoading } = useStats();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     if (window.confirm('Are you sure you want to sign out?')) {
@@ -33,7 +35,7 @@ const ProfilePage: React.FC = () => {
       icon: Cog6ToothIcon,
       title: 'Account Settings',
       description: 'Manage your account preferences',
-      onClick: () => showToast('info', 'Coming soon', 'Account settings will be available soon'),
+      onClick: () => navigate('/settings'),
     },
     {
       icon: BellIcon,

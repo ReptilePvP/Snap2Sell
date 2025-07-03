@@ -1,0 +1,26 @@
+🔒 SNAPALYZE - Password Reset
+
+Hi there! 🔑
+
+We received a request to reset the password for your Snapalyze account.
+
+RESET YOUR PASSWORD:
+{{ .ConfirmationURL }}
+
+Click the link above or copy it into your browser to create a new password.
+
+⚠️ SECURITY NOTICE:
+- This link expires in 1 hour for your security
+- If you didn't request this reset, you can safely ignore this email
+- Never share this link with anyone
+
+Having trouble? Contact our support team:
+https://www.snapalyze.org/support
+
+Stay secure!
+
+---
+Snapalyze Security Team
+https://www.snapalyze.org
+
+© 2025 Snapalyze. Keeping your account secure.

@@ -19,8 +19,10 @@ import AnalyzeSearchAPIPage from './pages/analysis/AnalyzeSearchAPIPage'
 import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import WelcomePage from './pages/auth/WelcomePage'
+import AuthCallbackPage from './pages/auth/AuthCallbackPage'
 import TroubleshootingPage from './pages/TroubleshootingPage'
 import ImageEnhancementDemo from './pages/ImageEnhancementDemo'
+import AccountSettingsPage from './pages/AccountSettingsPage'
 import AuthLoading from './components/AuthLoading'
 
 const AppContent: React.FC = () => {
@@ -36,6 +38,7 @@ const AppContent: React.FC = () => {
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/troubleshooting" element={<TroubleshootingPage />} />
         <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
@@ -50,6 +53,7 @@ const AppContent: React.FC = () => {
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/saved" element={<SavedPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<AccountSettingsPage />} />
         <Route path="/analyze" element={<AnalysisSelectionPage />} />
         <Route path="/analyze/gemini" element={<AnalyzeGeminiPage />} />
         <Route path="/analyze/serpapi" element={<AnalyzeSerpAPIPage />} />

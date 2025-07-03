@@ -1,0 +1,27 @@
+📸 SNAPALYZE - Welcome!
+
+Hi there! 🎉
+
+Thanks for joining Snapalyze, your AI-powered item analysis platform!
+
+You're just one step away from unlocking powerful features like:
+✅ Smart AI item identification
+💰 Instant value estimation  
+📱 Mobile scanning capabilities
+
+CONFIRM YOUR EMAIL:
+{{ .ConfirmationURL }}
+
+Simply click the link above or copy it into your browser to activate your account.
+
+⏰ This link expires in 24 hours for security.
+
+Having trouble? Visit https://www.snapalyze.org/support
+
+Welcome to the future of item analysis!
+
+---
+Snapalyze Team
+https://www.snapalyze.org
+
+© 2025 Snapalyze. Made with ❤️ for item analysis enthusiasts.
