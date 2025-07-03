@@ -63,7 +63,7 @@ const Logo: React.FC<LogoProps> = ({
         <div className={`relative ${className}`}>
           <div className={getContainerClasses()}>
             <img 
-              src="/logo-icon.png" 
+              src="/logo-full-removebg.png" 
               alt="Snapalyze" 
               className={getImageClasses()}
               style={{
@@ -85,7 +85,7 @@ const Logo: React.FC<LogoProps> = ({
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
       <img 
-        src="/logo-icon.png" 
+        src="/logo-full-removebg.png" 
         alt="Snapalyze Logo" 
         className={sizeClasses[size]}
         style={getLogoStyles()}

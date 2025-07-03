@@ -10,7 +10,6 @@ import {
   TrophyIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
-import Logo from '../../components/Logo';
 
 const WelcomePage: React.FC = () => {
   const features = [
@@ -60,8 +59,37 @@ const WelcomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto w-full">
           {/* Header */}
           <div className="text-center mb-16">
-            <div className="flex justify-center mb-8">
-              <Logo variant="glass" showText={false} />
+            {/* 3D Floating Logo */}
+            <div className="flex justify-center mb-12">
+              <div className="relative perspective-1000">
+                <div className="logo-3d-container animate-float-3d">
+                  <div className="logo-3d-face logo-3d-front">
+                    <img 
+                      src="/logo-full-removebg.png" 
+                      alt="Snapalyze" 
+                      className="w-16 h-16"
+                    />
+                  </div>
+                  <div className="logo-3d-face logo-3d-back">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-600 rounded-2xl flex items-center justify-center">
+                      <span className="text-white font-bold text-xl">S</span>
+                    </div>
+                  </div>
+                  <div className="logo-3d-face logo-3d-left"></div>
+                  <div className="logo-3d-face logo-3d-right"></div>
+                  <div className="logo-3d-face logo-3d-top"></div>
+                  <div className="logo-3d-face logo-3d-bottom"></div>
+                </div>
+                {/* Floating particles around logo */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="floating-particle particle-1"></div>
+                  <div className="floating-particle particle-2"></div>
+                  <div className="floating-particle particle-3"></div>
+                  <div className="floating-particle particle-4"></div>
+                </div>
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-3xl blur-2xl animate-pulse scale-150"></div>
+              </div>
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
