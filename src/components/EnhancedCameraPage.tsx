@@ -4,11 +4,9 @@ import { useToast } from '../hooks/useToast';
 import { analyzeImageWithGeminiAPI, uploadImageDirectly } from '../services/apiService';
 import { AnalysisResult } from '../types';
 import { EnhancedImageResult } from '../types/imageEnhancements';
-import EnhancedImageUpload from './EnhancedImageUpload';
 import ImageComparisonModal from './ImageComparisonModal';
 import ResultCard from './ResultCard';
 import AnalysisLoading from './AnalysisLoading';
-import LoadingSpinner from './LoadingSpinner';
 
 const EnhancedCameraPage: React.FC = () => {
   const { showToast } = useToast();
@@ -259,7 +257,7 @@ const EnhancedCameraPage: React.FC = () => {
       setIsUploading(false);
 
       // Analyze with Gemini
-      const analysisResult = await analyzeImageWithGeminiAPI(uploadResult.imageUrl);
+      const analysisResult = await analyzeImageWithGeminiAPI(uploadResult);
       console.log('Analysis result:', analysisResult);
 
       setAnalysisResult(analysisResult);
@@ -308,13 +306,8 @@ const EnhancedCameraPage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <AnalysisLoading 
-          stage={loadingStage}
-          message={
-            loadingStage === 'uploading' ? 'Uploading image...' :
-            loadingStage === 'analyzing' ? 'Analyzing with AI...' :
-            loadingStage === 'processing' ? 'Processing results...' :
-            'Complete!'
-          }
+          currentStage={loadingStage}
+          apiProvider="Gemini"
         />
       </div>
     );
@@ -472,7 +465,8 @@ const EnhancedCameraPage: React.FC = () => {
       {/* Modals */}
       {showComparison && enhancementResult && (
         <ImageComparisonModal
-          result={enhancementResult}
+          isOpen={showComparison}
+          enhancementResult={enhancementResult}
           onConfirm={handleComparisonConfirm}
           onClose={() => setShowComparison(false)}
         />
