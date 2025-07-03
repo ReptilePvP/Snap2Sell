@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { EyeIcon, EyeSlashIcon, UserIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ForgotPasswordModal from '../../components/ForgotPasswordModal';
+import Logo from '../../components/Logo';
 
 const SignInPage: React.FC = () => {
   const { signIn, signInWithGoogle, isLoading } = useAuth();
@@ -42,8 +43,8 @@ const SignInPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6">
-            <UserIcon className="h-8 w-8 text-white" />
+          <div className="mx-auto flex items-center justify-center mb-6">
+            <Logo size="lg" showText={false} />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
             Welcome Back

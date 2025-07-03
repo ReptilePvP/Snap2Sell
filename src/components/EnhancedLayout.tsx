@@ -20,6 +20,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { useAuth } from '../hooks/useAuth';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 import { useState } from 'react';
 
 interface LayoutProps {
@@ -158,14 +159,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4 border-r border-gray-200 dark:border-gray-700">
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2 touch-feedback">
-              <img 
-                src="/logo-icon.png" 
-                alt="Snapalyze Logo" 
-                className="h-8 w-8"
-              />
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Snapalyze
-              </span>
+              <Logo size="md" />
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">
@@ -232,14 +226,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Bars3Icon className="h-6 w-6" />
             </button>
             <Link to="/" className="flex items-center space-x-2 touch-feedback rounded-lg p-2">
-              <img 
-                src="/logo-icon.png" 
-                alt="Snapalyze Logo" 
-                className="h-6 w-6"
-              />
-              <span className="text-lg font-bold text-gray-900 dark:text-white">
-                Snapalyze
-              </span>
+              <Logo size="sm" />
             </Link>
           </div>
           <ThemeToggle />
@@ -264,14 +251,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 className="flex items-center space-x-2 touch-feedback rounded-lg p-2" 
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <img 
-                  src="/logo-icon.png" 
-                  alt="Snapalyze Logo" 
-                  className="h-6 w-6"
-                />
-                <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  Snapalyze
-                </span>
+                <Logo size="sm" />
               </Link>
               <button
                 type="button"
