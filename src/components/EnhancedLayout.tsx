@@ -158,7 +158,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4 border-r border-gray-200 dark:border-gray-700">
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2 touch-feedback">
-              <CameraIcon className="h-8 w-8 text-blue-600" />
+              <img 
+                src="/logo-icon.png" 
+                alt="Snapalyze Logo" 
+                className="h-8 w-8"
+              />
               <span className="text-xl font-bold text-gray-900 dark:text-white">
                 Snapalyze
               </span>
@@ -228,7 +232,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Bars3Icon className="h-6 w-6" />
             </button>
             <Link to="/" className="flex items-center space-x-2 touch-feedback rounded-lg p-2">
-              <CameraIcon className="h-6 w-6 text-blue-600" />
+              <img 
+                src="/logo-icon.png" 
+                alt="Snapalyze Logo" 
+                className="h-6 w-6"
+              />
               <span className="text-lg font-bold text-gray-900 dark:text-white">
                 Snapalyze
               </span>
@@ -256,7 +264,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 className="flex items-center space-x-2 touch-feedback rounded-lg p-2" 
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <CameraIcon className="h-6 w-6 text-blue-600" />
+                <img 
+                  src="/logo-icon.png" 
+                  alt="Snapalyze Logo" 
+                  className="h-6 w-6"
+                />
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
                   Snapalyze
                 </span>
