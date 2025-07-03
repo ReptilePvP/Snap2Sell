@@ -80,6 +80,7 @@ export interface AuthContextType {
   signOut: () => Promise<void>;
   updateProfile?: (data: { name: string; email: string }) => Promise<void>;
   updatePassword?: (newPassword: string) => Promise<void>;
+  resetPassword?: (email: string) => Promise<void>;
   deleteAccount?: () => Promise<void>;
   isLoading: boolean;
 }

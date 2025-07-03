@@ -4,6 +4,7 @@ import { EyeIcon, EyeSlashIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import ForgotPasswordModal from '../../components/ForgotPasswordModal';
 
 const SignInPage: React.FC = () => {
   const { signIn, signInWithGoogle, isLoading } = useAuth();
@@ -11,6 +12,7 @@ const SignInPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,9 +154,13 @@ const SignInPage: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotModal(true)}
+                  className="font-medium text-blue-600 hover:text-blue-500 touch-feedback rounded px-2 py-1"
+                >
                   Forgot your password?
-                </a>
+                </button>
               </div>
             </div>
 
@@ -188,6 +194,12 @@ const SignInPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal 
+        isOpen={showForgotModal} 
+        onClose={() => setShowForgotModal(false)} 
+      />
     </div>
   );
 };

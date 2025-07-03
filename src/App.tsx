@@ -18,6 +18,7 @@ import AnalyzeSearchAPIPage from './pages/analysis/AnalyzeSearchAPIPage'
 // import AnalyzeOpenLensPage from './pages/analysis/AnalyzeOpenLensPage'
 import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
+import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import WelcomePage from './pages/auth/WelcomePage'
 import AuthCallbackPage from './pages/auth/AuthCallbackPage'
 import TroubleshootingPage from './pages/TroubleshootingPage'
@@ -39,6 +40,7 @@ const AppContent: React.FC = () => {
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
         <Route path="/troubleshooting" element={<TroubleshootingPage />} />
         <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>

@@ -414,6 +414,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      console.log('Attempting to reset password for email:', email);
+      const redirectUrl = `${window.location.origin}/auth/reset-password`;
+      console.log('Redirect URL:', redirectUrl);
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl
+      });
+
+      if (error) {
+        console.error('Supabase reset password error:', error);
+        throw new Error(error.message);
+      }
+
+      console.log('Password reset email sent successfully');
+    } catch (error) {
+      console.error('Reset password function error:', error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -426,6 +448,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         updateProfile,
         updatePassword,
         deleteAccount,
+        resetPassword,
         isLoading,
       }}
     >
