@@ -14,8 +14,7 @@ import AnalysisSelectionPage from './pages/AnalysisSelectionPage'
 import AnalyzeGeminiPage from './pages/analysis/AnalyzeGeminiPage'
 import AnalyzeSerpAPIPage from './pages/analysis/AnalyzeSerpAPIPage'
 import AnalyzeSearchAPIPage from './pages/analysis/AnalyzeSearchAPIPage'
-// TODO: OpenLens temporarily disabled - working on improvements
-// import AnalyzeOpenLensPage from './pages/analysis/AnalyzeOpenLensPage'
+import AnalyzeOpenLensPage from './pages/analysis/AnalyzeOpenLensPage'
 import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
@@ -24,6 +23,7 @@ import AuthCallbackPage from './pages/auth/AuthCallbackPage'
 import TroubleshootingPage from './pages/TroubleshootingPage'
 import ImageEnhancementDemo from './pages/ImageEnhancementDemo'
 import AccountSettingsPage from './pages/AccountSettingsPage'
+import AdminPanel from './pages/AdminPanel'
 import AuthLoading from './components/AuthLoading'
 
 const AppContent: React.FC = () => {
@@ -60,9 +60,9 @@ const AppContent: React.FC = () => {
         <Route path="/analyze/gemini" element={<AnalyzeGeminiPage />} />
         <Route path="/analyze/serpapi" element={<AnalyzeSerpAPIPage />} />
         <Route path="/analyze/searchapi" element={<AnalyzeSearchAPIPage />} />
+        <Route path="/analyze/openlens" element={<AnalyzeOpenLensPage />} />
         <Route path="/demo/enhancements" element={<ImageEnhancementDemo />} />
-        {/* TODO: OpenLens temporarily disabled - working on improvements */}
-        {/* <Route path="/analyze/openlens" element={<AnalyzeOpenLensPage />} /> */}
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>

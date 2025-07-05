@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { CameraIcon, PhotoIcon, ArrowPathIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useToast } from '../hooks/useToast';
+import { useAuth } from '../hooks/useAuth';
 import { analyzeImageWithGeminiAPI, uploadImageDirectly } from '../services/apiService';
 import { AnalysisResult } from '../types';
 import { EnhancedImageResult } from '../types/imageEnhancements';
@@ -9,11 +10,10 @@ import ImageComparisonModal from '../components/ImageComparisonModal';
 import ResultCard from '../components/ResultCard';
 import AnalysisLoading from '../components/AnalysisLoading';
 import LoadingSpinner from '../components/LoadingSpinner';
-import PullToRefresh from '../components/PullToRefresh';
-import MobileButton from '../components/MobileButton';
 
 const CameraPage: React.FC = () => {
   const { showToast } = useToast();
+  const { permissions } = useAuth();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -24,14 +24,22 @@ const CameraPage: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   
-  // Load enhancement setting from localStorage, default to true
+  // Enhancement access is controlled by user permissions
+  const canUseEnhancements = permissions?.canUseImageEnhancer || false;
+  
+  // Load enhancement setting from localStorage, but respect user permissions
   const [useEnhancements, setUseEnhancements] = useState(() => {
+    if (!canUseEnhancements) return false;
     const saved = localStorage.getItem('cameraEnhancementsEnabled');
     return saved !== null ? JSON.parse(saved) : true;
   });
 
   // Save enhancement setting to localStorage when it changes
   const handleEnhancementToggle = (enabled: boolean) => {
+    if (!canUseEnhancements && enabled) {
+      showToast('error', 'Feature Unavailable', 'Image enhancement requires a paid subscription');
+      return;
+    }
     setUseEnhancements(enabled);
     localStorage.setItem('cameraEnhancementsEnabled', JSON.stringify(enabled));
   };
@@ -556,18 +564,22 @@ const CameraPage: React.FC = () => {
                       Image Enhancements
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Auto-rotation, background removal, and dimension measurement
+                      {canUseEnhancements 
+                        ? 'Auto-rotation, background removal, and dimension measurement'
+                        : 'Auto-rotation, background removal, and dimension measurement (Requires paid subscription)'
+                      }
                     </p>
                   </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className={`relative inline-flex items-center ${canUseEnhancements ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
                   <input
                     type="checkbox"
                     checked={useEnhancements}
                     onChange={(e) => handleEnhancementToggle(e.target.checked)}
+                    disabled={!canUseEnhancements}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                 </label>
               </div>
             </div>

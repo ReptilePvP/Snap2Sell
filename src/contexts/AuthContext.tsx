@@ -1,14 +1,18 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { supabase } from '../services/supabaseClient';
 import type { User } from '@supabase/supabase-js';
-import { AuthContextType } from '../types';
+import { AuthContextType, UserPermissions } from '../types';
 import { logEnvironmentStatus } from '../utils/connectionDebug';
 import { ToastContext } from './ToastContext';
+import { RoleService } from '../services/roleService';
 
 interface UserProfile {
   id: string;
   email: string;
   name: string;
+  role: 'guest' | 'user' | 'paid' | 'admin';
+  subscription_end_date?: string;
+  created_by_admin?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -23,6 +27,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toastContext = useContext(ToastContext);
+
+  // Helper function to get user permissions
+  const getUserPermissions = (): UserPermissions => {
+    return RoleService.getPermissions(user);
+  };
 
   // Test Supabase connection on mount
   useEffect(() => {
@@ -195,6 +204,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 id: user.id,
                 name: user.user_metadata.name || user.email?.split('@')[0] || 'User',
                 email: user.email || '',
+                role: 'user',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               });
@@ -213,6 +223,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             id: user.id,
             name: user.user_metadata.name || user.email?.split('@')[0] || 'User',
             email: user.email || '',
+            role: 'user',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
@@ -225,6 +236,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         id: user.id,
         name: user.user_metadata.name || user.email?.split('@')[0] || 'User',
         email: user.email || '',
+        role: 'user',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -441,6 +453,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       value={{
         user,
         isAuthenticated: !!user,
+        permissions: getUserPermissions(),
         signIn,
         signUp,
         signInWithGoogle,

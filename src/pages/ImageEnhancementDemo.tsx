@@ -8,6 +8,7 @@ import {
 } from '@heroicons/react/24/outline';
 import EnhancedImageUpload from '../components/EnhancedImageUpload';
 import { EnhancedImageResult } from '../types/imageEnhancements';
+import RoleGuard from '../components/RoleGuard';
 
 const ImageEnhancementDemo: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -56,7 +57,8 @@ const ImageEnhancementDemo: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <RoleGuard requireImageEnhancer={true}>
+      <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center">
         <div className="flex items-center justify-center mb-4">
@@ -337,6 +339,7 @@ const ImageEnhancementDemo: React.FC = () => {
         </div>
       </div>
     </div>
+    </RoleGuard>
   );
 };
 

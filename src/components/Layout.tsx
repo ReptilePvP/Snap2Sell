@@ -8,7 +8,8 @@ import {
   UserIcon,
   ChartBarIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  CogIcon
 } from '@heroicons/react/24/outline';
 import { 
   HomeIcon as HomeIconSolid, 
@@ -16,10 +17,12 @@ import {
   ClockIcon as ClockIconSolid, 
   StarIcon as StarIconSolid, 
   UserIcon as UserIconSolid,
-  ChartBarIcon as ChartBarIconSolid
+  ChartBarIcon as ChartBarIconSolid,
+  CogIcon as CogIconSolid
 } from '@heroicons/react/24/solid';
 import { useAuth } from '../hooks/useAuth';
 import ThemeToggle from './ThemeToggle';
+import UserRoleIndicator from './UserRoleIndicator';
 import { useState } from 'react';
 
 interface LayoutProps {
@@ -35,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const navigation = [
+  const baseNavigation = [
     { 
       name: 'Home', 
       href: '/', 
@@ -73,6 +76,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       iconSolid: UserIconSolid 
     },
   ];
+
+  // Add admin navigation item for admin users
+  const navigation = user?.role === 'admin' ? [
+    ...baseNavigation,
+    { 
+      name: 'Admin', 
+      href: '/admin', 
+      icon: CogIcon, 
+      iconSolid: CogIconSolid 
+    }
+  ] : baseNavigation;
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -191,23 +205,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </ul>
               </li>
               <li className="mt-auto">
-                <div className="flex items-center justify-between p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
-                      <span className="text-sm font-medium text-white">
-                        {user?.name?.charAt(0).toUpperCase() || 'U'}
-                      </span>
+                <div className="space-y-3 p-3">
+                  <UserRoleIndicator />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                        <span className="text-sm font-medium text-white">
+                          {user?.name?.charAt(0).toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {user?.name || 'User'}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {user?.name || 'User'}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {user?.email}
-                      </p>
-                    </div>
+                    <ThemeToggle />
                   </div>
-                  <ThemeToggle />
                 </div>
               </li>
             </ul>
@@ -295,19 +312,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </nav>
             </div>
             <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-              <div className="flex items-center space-x-3 p-3">
-                <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">
-                    {user?.name?.charAt(0).toUpperCase() || 'U'}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-medium text-gray-900 dark:text-white truncate">
-                    {user?.name || 'User'}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {user?.email}
-                  </p>
+              <div className="space-y-3">
+                <UserRoleIndicator />
+                <div className="flex items-center space-x-3 p-3">
+                  <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+                    <span className="text-sm font-medium text-white">
+                      {user?.name?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-medium text-gray-900 dark:text-white truncate">
+                      {user?.name || 'User'}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {user?.email}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

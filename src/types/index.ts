@@ -63,17 +63,33 @@ export interface ToastMessage {
 
 export type Theme = 'light' | 'dark';
 
+export type UserRole = 'guest' | 'user' | 'paid' | 'admin';
+
 export interface User {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
+  subscription_end_date?: string;
+  created_by_admin?: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface UserPermissions {
+  canUseGemini: boolean;
+  canUseSerpAPI: boolean;
+  canUseSearchAPI: boolean;
+  canUseOpenLens: boolean;
+  canUseImageEnhancer: boolean;
+  canAccessAdminPanel: boolean;
+  allowedProviders: ApiProvider[];
 }
 
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  permissions: UserPermissions;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
