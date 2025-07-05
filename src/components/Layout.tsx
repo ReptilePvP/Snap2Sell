@@ -215,9 +215,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {user?.name || 'User'}
-                        </p>
+                        <div className="flex items-center space-x-2">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            {user?.name || 'User'}
+                          </p>
+                          <UserRoleIndicator className="flex-shrink-0" />
+                        </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {user?.email}
                         </p>
@@ -313,7 +316,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             <div className="border-t border-gray-200 dark:border-gray-700 p-4">
               <div className="space-y-3">
-                <UserRoleIndicator />
                 <div className="flex items-center space-x-3 p-3">
                   <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
@@ -321,9 +323,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-medium text-gray-900 dark:text-white truncate">
-                      {user?.name || 'User'}
-                    </p>
+                    <div className="flex items-center space-x-2">
+                      <p className="text-base font-medium text-gray-900 dark:text-white truncate">
+                        {user?.name || 'User'}
+                      </p>
+                      <UserRoleIndicator className="flex-shrink-0" />
+                    </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                       {user?.email}
                     </p>

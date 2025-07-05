@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { supabase } from '../services/supabaseClient';
 import type { User } from '@supabase/supabase-js';
 import { AuthContextType, UserPermissions } from '../types';
@@ -23,7 +23,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toastContext = useContext(ToastContext);
@@ -169,6 +169,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (profile) {
         console.log('Profile loaded:', profile);
+        console.log('User role:', profile.role);
+        console.log('Profile keys:', Object.keys(profile));
+        
+        // Ensure user always has a role (fallback to 'user' if undefined)
+        if (!profile.role) {
+          profile.role = 'user';
+          console.log('Setting default role to user');
+        }
+        
         setUser(profile);
       } else {
         console.log('Profile not found, creating new profile');
@@ -182,6 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
               id: user.id,
               name: name,
               email: user.email,
+              role: 'user', // Explicitly set default role
             })
             .select()
             .single();
@@ -468,4 +478,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
-}
+};

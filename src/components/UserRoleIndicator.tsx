@@ -21,6 +21,9 @@ export const UserRoleIndicator: React.FC<UserRoleIndicatorProps> = ({
   const { user } = useAuth();
   const [showTooltip, setShowTooltip] = useState(false);
 
+  console.log('UserRoleIndicator: user =', user);
+  console.log('UserRoleIndicator: user?.role =', user?.role);
+
   if (!user) {
     return (
       <div className={`flex items-center space-x-2 ${className}`}>

@@ -10,8 +10,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { getAvailableProviders, isOpenLensConfigured, isDevelopment } from '../utils/providerAvailability';
 import { ApiProvider } from '../types';
+import { useAuth } from '../hooks/useAuth';
 
 const AnalysisSelectionPage: React.FC = () => {
+  const { permissions } = useAuth();
   const [availableProviders, setAvailableProviders] = useState<ApiProvider[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,18 +21,41 @@ const AnalysisSelectionPage: React.FC = () => {
     const checkProviders = async () => {
       try {
         const providers = await getAvailableProviders();
-        setAvailableProviders(providers);
+        
+        // Filter providers based on user permissions
+        const allowedProviders = providers.filter(provider => {
+          if (!permissions) return false;
+          
+          switch (provider) {
+            case ApiProvider.GEMINI:
+              return permissions.canUseGemini;
+            case ApiProvider.SERPAPI:
+              return permissions.canUseSerpAPI;
+            case ApiProvider.SEARCHAPI:
+              return permissions.canUseSearchAPI;
+            case ApiProvider.OPENLENS:
+              return permissions.canUseOpenLens;
+            default:
+              return false;
+          }
+        });
+        
+        setAvailableProviders(allowedProviders);
       } catch (error) {
         console.error('Error checking available providers:', error);
-        // Fallback to basic providers if check fails
-        setAvailableProviders([ApiProvider.GEMINI, ApiProvider.SERPAPI, ApiProvider.SEARCHAPI]);
+        // Fallback: only show Gemini for basic users if permissions exist
+        if (permissions?.canUseGemini) {
+          setAvailableProviders([ApiProvider.GEMINI]);
+        } else {
+          setAvailableProviders([]);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     checkProviders();
-  }, []);
+  }, [permissions]);
 
   const allAnalysisOptions = [
     {
